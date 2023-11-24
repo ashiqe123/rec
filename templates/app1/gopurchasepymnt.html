@@ -1,0 +1,221 @@
+{% extends 'app1/base.html' %}
+{% block body %}
+{% load static %}
+    {% if user.is_authenticated %}
+
+    <script src="https://kit.fontawesome.com/46db3e6bea.js" crossorigin="anonymous"></script>
+
+      <style>
+        @import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+        body{
+        background: #f2f2f2;
+        font-family: 'Open Sans', sans-serif;
+        }
+
+        .search {
+        width: 100%;
+        position: relative;
+        display: flex;
+        }
+
+        .searchTerm {
+        width: 100%;
+        border: 3px solid #7690da;
+        border-right: none;
+        padding: 5px;
+        height: 36px;
+        border-radius: 5px 0 0 5px;
+        outline: none;
+        color: #9DBFAF;
+        
+        }
+
+        .searchTerm:focus{
+        color:#7690da;
+        }
+
+        .searchButton {
+        width: 40px;
+        height: 36px;
+        border: 1px solid #7690da;
+        background:#7690da;
+        text-align: center;
+        color: #fff;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        font-size: 20px;
+        }
+
+        .table-row{
+                cursor:pointer;
+        }
+        /* .table-row:hover{
+            background-color: rgb(217, 232, 51);
+        } */
+
+        /*Resize the wrap to see the search bar change!*/
+        .wrap{
+        width: 40%;
+        /* position: absolute;
+        top: 50%;
+        left: 50%; */
+        /* transform: translate(-50%, -50%); */
+        }
+      </style>
+        <div class="page-content">
+            <div class="card radius-15">
+                <div class="card-body">
+                    <div class="card-title">
+                        <center><h2 class="mb-0">ALL PAYMENT MADE</h2></center>
+                        <hr>
+                        <!-- <div class="btn-group col-md-2" style="float: right;">
+                            <a class="btn btn-outline-info text-grey" onclick="ExportToExcel('xlsx')">Export To Excel</a>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+            <div class="card radius-15">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <input type="text" id="search" placeholder="Search..." class="form-control" autocomplete="off" 
+                                style="margin-top: 8px; background-color: #2f516f;color: white;">
+                        </div>
+                        <div class="col-md-2" style="width: 40%; margin-top: 9px;">
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-outline-info   text-grey "
+                                        data-toggle="dropdown"> Sort by
+                                </button>
+                                <div class="dropdown-menu " style="background-color: black;">
+                                    <a class="dropdown-item" href="{% url 'gopurchasepymnt' %}"
+                                        style="height: 40px; font-size: 15px; color: white; text-align: center;" >All</a>
+                                <a class="dropdown-item" href="{% url 'sort_payment_name' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Vendor Name </a>
+                                <!-- <a class="dropdown-item  " href="{% url 'sales_num_desc' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Sales Order Number <icon class=" fas fa-arrow-up"></icon></a> -->
+
+                                <a class="dropdown-item " href="{% url 'sort_paid_through' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center; " >Paid Through</a>
+                                <!-- <a class="dropdown-item " href="{% url 'sales_date_desc' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Date <icon class=" fas fa-arrow-up"></icon></a> -->
+
+                                <!-- <a class="dropdown-item  " href="{% url 'sales_cust_asc' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >
+                                        Customer  </a> -->
+                                <!-- <a class="dropdown-item  " href="{% url 'sales_cust_desc' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Customer <icon class=" fas fa-arrow-up"></icon></a> -->
+                                    
+                                        
+                                </div> 
+                            </div>
+                        </div>
+                        <div class="col-md-3"></div>
+
+                        <div class="col-md-1 mx-5" style="width: 40%; margin-top: 8px;">
+
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-outline-info  dropdown-toggle text-grey"
+                                        data-toggle="dropdown"> filter by
+                                </button>
+                                
+                        <div class="dropdown-menu" style="background-color: black;">
+                            <a class="dropdown-item" href="{% url 'gopurchasepymnt' %}"
+                               style="height: 40px; font-size: 15px; color: white;" >All</a>
+                            <a class="dropdown-item" href="{% url 'payment_draft' %}"
+                               style="height: 40px; font-size: 15px; color: white;">Draft</a>
+                            <a class="dropdown-item" href="{% url 'payment_save' %}"
+                               style="height: 40px; font-size: 15px; color: white;">Save</a>
+                            
+                    </div>  
+                            </div>
+                        </div>
+                        <div class="col-md-2" >
+                            <a href="{% url 'addpurchasepymnt' %}" >
+                                <button id="myBtn" class="btn btn-outline-info text-grey " style="margin-top: 8px;">&nbsp;+ New</button>
+                            </a>
+                        </div>
+
+                    </div>
+                    <div class="container-fluid">
+                        <table class="table table-responsive-md mt-4 table-hover" id="table">
+                            <thead>
+                                <tr>
+                                    <!-- <th>Payment</th> -->
+                                    <th>Vendor</th>
+                                    <th>E mail</th>
+                                    <!-- <th>Reference</th> -->
+                                    <th>Payment Date</th>
+                                    <th>Payment Method</th>
+                                    <th>Reference</th>
+                                    <th>Balance Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in py %}
+                                <tr onclick="window.location='viewpurchasepymnt/{{ p.pymntid }}';">
+                                    <!-- <td><strong>{{ p.pymntid }}</strong></td> -->
+                                    <td>{{ p.vendor }}</td>
+                                    <td>{{ p.email }}</td>
+                                    <td>{{ p.paymentdate |date:'d-m-Y' }}</td>
+                                    <td>{{ p.paymentmethod }}</td>
+                                    
+                                    
+
+                                    <td>{{ p.reference }}</td>
+                                    <!-- <td>
+                                        {% for a1 in p.purchasepayment1_set.all %}
+                                            {{ a1.billamount }}
+                                        {% empty %}
+                                            Amount Not Found
+                                        {% endfor %}
+                                    </td> -->
+                                    
+                                    
+                                    <td>{{ p.amtcredit }}</td>
+                                    <td>{{ p.status }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+        <script>
+            jQuery(document).ready(function($) {
+                $(".clickable-row").click(function() {
+                    window.location = $(this).data("href");
+                });
+            });
+        </script>
+
+        <script>
+
+            $(document).ready(function() {
+                var $rows = $('.table tbody tr');
+                $('#search').keyup(function() {
+                    var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+                    $rows.show().filter(function() {
+                        console.log($rows.show())
+
+                        var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                        console.log(text)
+                        return !~text.indexOf(val);
+                    }).hide();
+                });
+            });
+    
+            function ExportToExcel(type, fn, dl) {
+                var elt = document.getElementById('table');
+                var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+                return dl ?
+                    XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }):
+                    XLSX.writeFile(wb, fn || ('Sales Order_' + (type || 'xlsx')));
+            }
+        </script>
+    {% endif %}
+{% endblock %}

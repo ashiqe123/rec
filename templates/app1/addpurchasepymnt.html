@@ -1,0 +1,1526 @@
+{% extends 'app1/base.html' %}
+{% block body %}
+    {% load static %}
+    <style>
+        .center-align {
+          text-align: center;
+        }
+      
+        .center-input {
+          margin: 0 auto;
+        }
+      
+        .narrow-input {
+          max-width: 600px; /* Adjust the maximum width as needed */
+        }
+      </style>
+    <div class="page-content">
+        <div class="card radius-15">
+            <div class="card-body">
+                <div class="card-title">
+                    <center><h2 class="mb-0" style="text-transform: uppercase;;">NEW PAYMENT MADE</h2></center>
+                </div>
+                <hr/>
+            </div>
+        </div>
+        <form action="createpurchasepymnt" method="post" class="post-form" autocomplete="off">
+            {% csrf_token %}
+            <div class="card radius-15">
+                <div class="card-body">
+                    <div class="row">
+                    
+                        <div class="col-md-3 mt-2">
+                            <label for="">Vendor</label>
+                            <div class="d-flex">
+                                <select name="vendor" id="select" class="custom-select">
+                                    <option selected disabled>Select Vendor</option>
+                                    {% for v in vndr %}
+                                    <option value="{{ v.firstname }} {{ v.lastname }}">{{ v.firstname }} {{ v.lastname }}</option>
+                                    {% endfor %}
+                                </select>
+                                
+                            </div>   
+                        </div>
+                       
+                        <div class="col-md-3 mt-2" id="emailField" style="display: none;">
+                            <label for="">E mail</label>
+                            <input type="text" name="email" id="email" class="form-control">
+                        </div> 
+
+                        <div class="col-md-3 mt-2" id="gstTypeField" style="display: none;">
+                            <label for="">GST Treatment</label>
+                            <input type="text" name="gsttype" id="gsttype" class="form-control">
+                        </div>
+
+                        <div class="col-md-3 mt-2" id="gstinField" style="display: none;">
+                            <label for="">GST Number</label>
+                            <input type="text" name="gstin" id="gstin" class="form-control">
+                        </div>
+                    </div>
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-4 mt-3">
+                            <label for="">Payment Date</label>
+                            <input type="date" name="paymentdate" id="date" class="form-control" required>
+                            
+                        </div>
+                    
+                        <div class="col-md-4 mt-3">
+                            <label for="">Reference</label>
+                            <input type="text" name="reference" value="{{ref_no}}" class="form-control" required>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-md-4">
+                                <input type="text" id="newmethod" onchange="addtemopt(this)" class="form-control"
+                                       style="display: none;">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mt-3">
+                            <label for="">Payment Method</label>
+                            <div class="d-flex">
+                                <select name="paymentmethod" id="paymeth" onclick="showinp('newmethod', this)" class="form-control" required>
+                                    <!-- <option value="NILL" selected disabled>Choose Payment Method</option> -->
+                                    <option value="" selected hidden>Select Payment Method</option>
+                                    <option value="cash">Cash</option>
+                                    <option value="cheque">Cheque</option>
+                                    <option value="upi">UPI</option>
+                                    {% for v in bank %}
+                                        <option value="{{ v.bank_name }}">{{ v.bank_name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <!-- <a class="btn btn-outline-secondary ml-1" data-target="#Add_option" data-toggle="modal" role="button">+</a> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                    <div class="col-md-4 mt-3">
+                          
+                       
+                        <div style="display:none;"  id="chequediv">
+                            <label class="col-form-label" >Cheque ID</label>
+                            <input type="text" class="form-control" name="cheque_id" id="cheque_id" placeholder="Enter Cheque ID">
+                        </div>
+                        
+                        <div style="display:none;" id="upidiv">
+                            <label class="col-form-label" >UPI ID</label>
+                            <input type="text" class="form-control" name="upi_id" id="upi_id" placeholder="Enter UPI ID">
+                        </div>
+
+                        <div style="display:none;" id="bnkdiv">
+                            <label class="col-form-label" >Bank Account</label>
+                            <input type="text" class="form-control" name="bnk_id" id="bnk_id" style="background-color: #43596c;" readonly>
+                        </div>
+                    </div>
+                        
+                    
+                </div>
+                        <!-- <div class="col-md-4 mt-3">
+                            <label for="">Payment Method</label>
+                            <div class="d-flex">
+                                <select name="paymentmethod" id="paymeth" class="form-control" style="width:87%">
+                                    <option value="Bank Transfer">Bank Transfer</option>
+                                    <option value="Cash" selected>Cash</option>
+                                    <option value="Cheque">Cheque</option>
+                                    <option value="Credit Card">Credit Card</option>
+                                    {% for p in pymt %}
+                                        <option value="{{ p.newmethod }}">{{ p.newmethod }}</option>
+                                    {% endfor %}
+                                </select>
+                                <a class="btn btn-outline-secondary ml-1" data-target="#Add_option" data-toggle="modal" role="button">+</a>
+                            </div>
+                        </div>
+                    </div> -->
+                    
+                    
+                    <br><br>
+                    
+                    <!-- <div class="form-group row">
+                        <label class="col-lg-2 col-form-label">Paid Through*</label>
+                        <div class="col-sm-10 col-md-7 col-9 ml-5">
+                            <div class="input-group mb-2">
+                                <div>
+                                    <input type="radio" id="cashRadio" name="paid_through" value="cash" style="margin-left: 40px;">
+                                    <label for="cashRadio">In-Hand Cash</label>
+                                </div>
+                
+                                <div>
+                                    <input type="radio" id="bankRadio" name="paid_through" value="bank" style="margin-left: 60px;">
+                                    <label for="bankRadio">Bank</label>
+                                </div>
+                
+                                <div>
+                                    <input type="radio" id="chequeRadio" name="paid_through" value="cheque" style="margin-left: 60px;">
+                                    <label for="chequeRadio">Cheque</label>
+                                </div>
+                
+                                <div>
+                                    <input type="radio" id="upiRadio" name="paid_through" value="upi" style="margin-left: 60px;">
+                                    <label for="upiRadio">UPI</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div id="bankFields" class="form-group row center-align">
+                        <label for="bankName" class="col-lg-2 col-form-label">Select Bank:</label>
+                        <div class="col-sm-6 col-md-5 col-6 center-input">
+                          <div class="input-group mb-2">
+                            <select id="bankName" name="account_number" class="form-control bg-light text-white narrow-input">
+                           
+                              {% for v in bank %}
+                              <option value="{{ v.account_number }}">{{ v.account_number }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div id="chequeFields" class="form-group row center-align">
+                        <label for="chequeNumber" class="col-lg-2 col-form-label">Cheque Number:</label>
+                        <div class="col-sm-6 col-md-5 col-6 center-input">
+                          <input type="text" id="chequeNumber" name="cheque_number" class="form-control narrow-input" placeholder="Cheque Number">
+                        </div>
+                      </div>
+                      
+                      <div id="upiFields" class="form-group row center-align">
+                        <label for="upiId" class="col-lg-2 col-form-label">UPI ID:</label>
+                        <div class="col-sm-6 col-md-5 col-6 center-input">
+                          <input type="text" id="upiId" name="upi_id" class="form-control narrow-input" placeholder="UPI ID or number">
+                        </div>
+                      </div>
+                    
+
+                    <br> -->
+                    
+                    <!-- <div class="col-md-3 mt-3">
+                        <label for="">Amount</label>
+                        <input type="number" onchange="updateAmountFields(this.value)" id="amtrcvd" class="form-control" name="amtreceived">
+                    </div>
+                    <div class="col-md-3 mt-3">
+                        <h5 class="text-grey">AMOUNT</h5>
+                        <h5 class="text-light" id="amre">0.00</h5>
+                    </div> -->
+                    <br><br>
+                        <div class="row clearfix">
+                            <div class="col-md-12 table-responsive-md">
+                                <table class="table table-bordered table-hover" id="tab_logic" style="background-color: rgba(0,0,0,0.4);">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-center">#</th>
+                                        <th class="text-center">Date</th>
+                                        <th class="text-center">Bill Number</th>
+                                        <th class="text-center">Bill Amount</th>
+                                        <th class="text-center">Due Date</th>
+                                        <th class="text-center">Balance Due</th>
+                                        <th class="text-center">Payment</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody id='vendordata'>
+                                       
+                                    </tbody>
+                                    <tbody id='billdata'>
+                                       
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row clearfix mt-4">
+                            <div class="col-md-7"></div>
+                            <div class="col-md-5 table-responsive-md">
+                                <table class="table table-bordered table-hover" id="tab_logic_total" style="background-color: rgba(0,0,0,0.4);">
+                                    <tbody>
+                                    <tr>
+                                        <th class="text-center">Amount to Apply</th>
+                                        <td class="text-center">
+                                            <input type="number" name="paymentamount" id="amtoapply" placeholder="0.00" class="form-control">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-center">Balance Amount</th>
+                                        <td class="text-center"><input type="number" name='amtcredit' id="amtcredit"
+                                            placeholder='0.00' class="form-control"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-md-10"></div>
+                            <!-- <div class="col-md-2">
+                                
+                                <button type="submit"
+                                        onclick="alert('Are you sure you wants to save the payment?\nNo corrections after submission')"
+                                        class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
+                                    Save
+                                </button>
+
+                            </div> -->
+                            <div class="" style="margin-left: 30rem; text-align: center;">
+                                <button type="submit" name="action" value="draft" class="btn btn-outline-info rounded-pill w-10 text-light">Save as Draft</button>&nbsp;
+                                <button type="submit" name="action" value="save"  class="btn btn-outline-info rounded-pill w-10 text-light">Save And Send</button>
+                            </div>
+                            
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-10">
+                                <div class="notices">
+                                    <div class="text-muted">NOTICE:</div>
+                                    <div class="notice text-muted">
+                                        Fin sYs Terms and Conditions Apply
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="modal fade" id="newaccount">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content" style="background-color: #213b52;">
+                    <div class="modal-header">
+                        <h3 class="m-3">Account</h3>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card p-3 m-3">
+                            <form method="post" action="{% url 'createaccount1' %}">
+                                {% csrf_token %}
+                                <div class="row mt-2 mb-2">
+                                    <div class="col-md-6">
+                                        <label for="acctyp">Account Type</label>
+                                        <select name="acctype" id="select1" class="custom-select-md form-control w-100">
+                                            <!-- <option >Account Receivable</option>
+                                            <option>Current Assets</option> -->
+                                            <option>Cash</option>
+                                            <option>Bank</option>
+                                            <!-- <option>Fixed Assets</option>
+                                            <option>Non-Current Assets</option>
+                                            <option>Accounts Payable</option>
+                                            <option>Credit Card</option>
+                                            <option>Current Liabilities</option>
+                                            <option>Non-Current Liabilities</option>
+                                            <option>Equity</option>
+                                            <option>Income</option>
+                                            <option>Other Incomes</option>
+                                            <option>Cost Of Goods Sold</option>
+                                            <option>Expenses</option>
+                                            <option>Other Expenses</option>
+                                            <option>Undepposited Funds</option>
+                                            <option>Stock(New)</option> -->
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>* Name</label>
+                                        <input name="name" id="name" placeholder="Account Name" required 
+                                               class="custom-select-md form-control w-100"> 
+                                    </div>
+                                    
+                                </div>
+                                <div class="row mt-2 mb-2">
+                                    <div class="col-md-6 mt-2">
+                                        <label for="balance">Credit</label>
+                                        <input type="number" name="balance" id="balance" placeholder="Credit Amount"
+                                               class="form-control" >
+                                    </div>
+                                    <div class="col-md-6 mt-2">
+                                        <label for="balance">Debit</label>
+                                        <input type="number" name="dbbalance" id="balance" placeholder="Debit Amount"
+                                               class="form-control">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mt-2">
+                                        <textarea class="form-control mt-2" name="Type details" cols="20"
+                                        rows="10" style="font-size: small;" disabled>Use Cash and Cash Equivalents to track cash or assets that can be converted into cash immediately. For example, marketable securities and Treasury bills.</textarea>
+                                    </div>
+                                    <div class="col-md-6 mt-2">
+                                        <div class="mt-2">
+                                            <div>
+                                                <label for="asof">As of</label>
+                                                <input type="date" name="asof" id="date1" class="form-control" value="{{ tod }}">
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <label>Description</label>
+                                        <textarea class="form-control" name="description" placeholder="Max. 500 Characters"></textarea>
+                                        </div>
+                                    </div>
+                                </div>        
+                                <div class="mt-3">
+                                    <div class="row">
+                                        <div class="col-md-5"></div>
+                                        <div class="col-md-4"></div>
+                                        <div class="col-md-3">
+                                            <button type="submit" class="btn btn-outline-info">Save and
+                                                close
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+        <div class="modal fade" id="Add_option">
+            <div class="modal-dialog">
+                <div class="modal-content" style="background-color: #213b52;">
+                    <div class="modal-header">
+                        <h3 class="m-3">New Payment Method</h3>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card p-3 m-3">
+                           
+                            <form action="" method="post" autocomplete="off" id="newmethod-form">
+
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-md-8 mt-2">
+                                        <input type="text" name="newmethod" id="option" class="form-control">
+                                    </div>
+                                    <div class="col-md-2 mt-2">
+                                        <button id="CreateOption" class="btn btn-outline-info text-grey mb-3" type="submit">Save</button>
+                                    </div>
+                                </div>
+                            </form>  
+                        </div>
+                    </div>
+                </div>   
+            </div>
+        </div>   
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        $('#date').val(new Date().toJSON().slice(0,10));
+        $('#date1').val(new Date().toJSON().slice(0,10));
+    </script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script>
+        function showinp(divId, element) {
+            if (element.value == 'Add New') {
+                document.getElementById(divId).style.display = 'block';
+            } else {
+                document.getElementById(divId).style.display = 'none';
+            }
+        }
+
+        
+
+        function addtemopt(element) {
+            var opt = document.getElementById('newmth');
+            if (element.value) {
+                opt.value = element.value;
+                opt.innerHTML = element.value;
+            } else {
+                pass
+            }
+        }      
+    </script>
+    
+    <script>
+        $("#select").change(function () {
+            const select = $(this).val();  
+            $.ajax({                      
+                type: "POST",
+                url: "{% url 'getbilldata' %}",
+                data: {
+                    'select': select,     
+                    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success:function(response){
+                    console.log(response)
+                    data = response.billitm
+                    date = response.date
+                    opb = response.opb 
+                    obdue = response.obdue
+                    xt= response.ct
+
+                    if (opb != null) {
+                        $('#tab_logic #vendordata').append(
+                            `
+                                <tr id='addr1'>
+                                    <td>1</td>
+                                    <td><input type="text" name="billdate[]" id="" value="${date}" class="form-control"/></td>
+                                    <td><input type="text" name='billno[]' id="" value="Vendor Opening Balance" class="form-control"/></td>
+                                    <td><input type="text" name='billamount[]' value="${opb}" id=""
+                                        class="form-control qty" step="0" min="0"/>
+                                    </td>
+                                    <td><input type="text" name="duedate[]" id="" value="${date}" class="form-control"/></td>
+
+
+                                   
+
+
+                                    <td>
+                                        <input type="number" name='amountdue[]' id="openbal0" value="${obdue}" class="form-control price"
+                                         step="0.00" min="0" />
+                                    </td>
+                                    <td>
+                                        <input type="number" name='payment[]' id="payment0" onchange="addagain()" class="form-control total" value="0" />
+                                    </td>
+                                </tr>
+                            `        
+                        )
+                    }   
+
+                    for (i=0;i<6;i++){
+                        j=i;
+                        $('#tab_logic ').append(
+                            `
+                                <tr id='addr1'>
+                                    <td>${i+2}</td>
+                                    <td><input type="text" name="billdate[]" id="" value="${data[i].date}" class="form-control"/></td>
+                                    <td><input type="text" name='billno[]' id="" value="${data[i].bill_no}" class="form-control"/></td>
+                                    <td><input type="text" name='billamount[]' value="${data[i].grand_total}" id=""
+                                        class="form-control qty" step="0" min="0"/>
+                                    </td>
+                                    <td><input type="text" name="duedate[]" id="" value="${data[i].deliver_date}" class="form-control"/></td>
+                                    <td><input type="number" name='amountdue[]' id="openbal${i+1}" value="${data[i].balance_amount}"
+                                        class="form-control price" step="0.00" min="0"/>
+                                    </td>
+                                    <td><input type="number" name='payment[]' onchange="addagain()" id="payment${i+1}" placeholder='0.00'
+                                        class="form-control total" value="0"/>
+                                    </td>
+                                </tr>
+                            `        
+                        )
+                    }    
+                    for (i=0;i<7;i++){
+                        j=i;
+                        $('#tab_logic ').append(
+                            `
+                                <tr id='addr1'>
+                                    <td>${i+2}</td>
+                                    <td><input type="text" name="billdate[]" id="" value="${data[i].date}" class="form-control"/></td>
+                                    <td><input type="text" name='billno[]' id="" value="${data[i].bill_no}" class="form-control"/></td>
+                                    <td><input type="text" name='billamount[]' value="${data[i].grand_total}" id=""
+                                        class="form-control qty" step="0" min="0"/>
+                                    </td>
+                                    <td><input type="text" name="duedate[]" id="" value="${data[i].deliver_date}" class="form-control"/></td>
+                                    <td><input type="number" name='amountdue[]' id="openbal${i}" value="${data[i].balance_amount}"
+                                        class="form-control price" step="0.00" min="0"/>
+                                    </td>
+                                    <td><input type="number" name='payment[]' onchange="addagain()" id="payment${i}" placeholder='0.00'
+                                        class="form-control total" value="0"/>
+                                    </td>
+                                </tr>
+                            `        
+                        )
+                    }    
+                }  
+            });
+        });
+
+        function showinnum(divId, element) {
+            if (element.value) {
+                document.getElementById(divId).innerHTML = element.value;
+
+                if(j==0){
+                
+                var opnbal = parseFloat(document.getElementById('openbal0').value)
+               
+                if (opnbal >= parseFloat(element.value)) {
+                    document.getElementById('payment0').value = parseFloat(element.value)
+                } 
+                // else if (openbal == 0) {
+                //     document.getElementById('payment0').value = '0'
+                // } 
+                else {
+                    document.getElementById('payment0').value = opnbal
+                }
+                var bal = parseFloat(element.value) - parseFloat(document.getElementById('payment0').value);
+                var payment = parseFloat(document.getElementById('payment0').value)
+            }else if(j==1){
+
+                var opnbal = parseFloat(document.getElementById('openbal0').value)
+               
+                if (opnbal >= parseFloat(element.value)) {
+                    document.getElementById('payment0').value = parseFloat(element.value)
+                } 
+                // else if (openbal == 0) {
+                //     document.getElementById('payment0').value = '0'
+                // } 
+                else {
+                    document.getElementById('payment0').value = opnbal
+                }
+                var bal = parseFloat(element.value) - parseFloat(document.getElementById('payment0').value);
+
+                var opnbal1 = parseFloat(document.getElementById('openbal1').value)
+                if (opnbal1 >= bal) {
+                    document.getElementById('payment1').value = bal
+                } else if (openbal1 == '0.0') {
+                    document.getElementById('payment1').value = '0'
+                } else {
+                    document.getElementById('payment1').value = opnbal1
+                }
+                var payment = parseFloat(document.getElementById('payment0').value)
+                var payment1 = parseFloat(document.getElementById('payment1').value);
+                var bal1 = parseFloat(element.value) - (payment + payment1);
+            } else if(j==2){
+                var opnbal = parseFloat(document.getElementById('openbal0').value)
+               
+                if (opnbal >= parseFloat(element.value)) {
+                    document.getElementById('payment0').value = parseFloat(element.value)
+                } 
+                // else if (openbal == 0) {
+                //     document.getElementById('payment0').value = '0'
+                // } 
+                else {
+                    document.getElementById('payment0').value = opnbal
+                }
+                var bal = parseFloat(element.value) - parseFloat(document.getElementById('payment0').value);
+
+                var opnbal1 = parseFloat(document.getElementById('openbal1').value)
+                if (opnbal1 >= bal) {
+                    document.getElementById('payment1').value = bal
+                } else if (openbal1 == '0.0') {
+                    document.getElementById('payment1').value = '0'
+                } else {
+                    document.getElementById('payment1').value = opnbal1
+                }
+                var payment = parseFloat(document.getElementById('payment0').value)
+                var payment1 = parseFloat(document.getElementById('payment1').value);
+                var bal1 = parseFloat(element.value) - (payment + payment1);
+                var opnbal2 = parseFloat(document.getElementById('openbal2').value)
+                if (opnbal2 >= bal1) {
+                    document.getElementById('payment2').value = bal1
+                } else {
+                    document.getElementById('payment2').value = opnbal2
+                }
+                var payment2 = parseFloat(document.getElementById('payment2').value)
+                var bal2 = parseFloat(element.value) - (payment + payment1 + payment2)
+            }else if(j==3){
+                var opnbal = parseFloat(document.getElementById('openbal0').value)
+               
+                if (opnbal >= parseFloat(element.value)) {
+                    document.getElementById('payment0').value = parseFloat(element.value)
+                } 
+                // else if (openbal == 0) {
+                //     document.getElementById('payment0').value = '0'
+                // } 
+                else {
+                    document.getElementById('payment0').value = opnbal
+                }
+                var bal = parseFloat(element.value) - parseFloat(document.getElementById('payment0').value);
+
+                var opnbal1 = parseFloat(document.getElementById('openbal1').value)
+                if (opnbal1 >= bal) {
+                    document.getElementById('payment1').value = bal
+                } else if (openbal1 == '0.0') {
+                    document.getElementById('payment1').value = '0'
+                } else {
+                    document.getElementById('payment1').value = opnbal1
+                }
+                var payment = parseFloat(document.getElementById('payment0').value)
+                var payment1 = parseFloat(document.getElementById('payment1').value);
+                var bal1 = parseFloat(element.value) - (payment + payment1);
+                var opnbal2 = parseFloat(document.getElementById('openbal2').value)
+                if (opnbal2 >= bal1) {
+                    document.getElementById('payment2').value = bal1
+                } else {
+                    document.getElementById('payment2').value = opnbal2
+                }
+                var payment2 = parseFloat(document.getElementById('payment2').value)
+                var bal2 = parseFloat(element.value) - (payment + payment1 + payment2)
+                var opnbal3 = parseFloat(document.getElementById('openbal3').value)
+                if (opnbal3 >= bal2) {
+                    document.getElementById('payment3').value = bal2
+                } else {
+                    document.getElementById('payment3').value = opnbal3
+                }
+                var payment3 = parseFloat(document.getElementById('payment3').value)
+                var bal3 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3)
+            }else if(j==4){
+                var opnbal = parseFloat(document.getElementById('openbal0').value)
+               
+                if (opnbal >= parseFloat(element.value)) {
+                    document.getElementById('payment0').value = parseFloat(element.value)
+                } 
+                // else if (openbal == 0) {
+                //     document.getElementById('payment0').value = '0'
+                // } 
+                else {
+                    document.getElementById('payment0').value = opnbal
+                }
+                var bal = parseFloat(element.value) - parseFloat(document.getElementById('payment0').value);
+
+                var opnbal1 = parseFloat(document.getElementById('openbal1').value)
+                if (opnbal1 >= bal) {
+                    document.getElementById('payment1').value = bal
+                } else if (openbal1 == '0.0') {
+                    document.getElementById('payment1').value = '0'
+                } else {
+                    document.getElementById('payment1').value = opnbal1
+                }
+                var payment = parseFloat(document.getElementById('payment0').value)
+                var payment1 = parseFloat(document.getElementById('payment1').value);
+                var bal1 = parseFloat(element.value) - (payment + payment1);
+                var opnbal2 = parseFloat(document.getElementById('openbal2').value)
+                if (opnbal2 >= bal1) {
+                    document.getElementById('payment2').value = bal1
+                } else {
+                    document.getElementById('payment2').value = opnbal2
+                }
+                var payment2 = parseFloat(document.getElementById('payment2').value)
+                var bal2 = parseFloat(element.value) - (payment + payment1 + payment2)
+                var opnbal3 = parseFloat(document.getElementById('openbal3').value)
+                if (opnbal3 >= bal2) {
+                    document.getElementById('payment3').value = bal2
+                } else {
+                    document.getElementById('payment3').value = opnbal3
+                }
+                var payment3 = parseFloat(document.getElementById('payment3').value)
+                var bal3 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3)
+                var opnbal4 = parseFloat(document.getElementById('openbal4').value)
+                if (opnbal4 >= bal3) {
+                    document.getElementById('payment4').value = bal3
+                } else {
+                    document.getElementById('payment4').value = opnbal4
+                }
+                var payment4 = parseFloat(document.getElementById('payment4').value)
+                var bal4 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4)
+            }else if(j==5){
+                var opnbal = parseFloat(document.getElementById('openbal0').value)
+               
+                if (opnbal >= parseFloat(element.value)) {
+                    document.getElementById('payment0').value = parseFloat(element.value)
+                } 
+                // else if (openbal == 0) {
+                //     document.getElementById('payment0').value = '0'
+                // } 
+                else {
+                    document.getElementById('payment0').value = opnbal
+                }
+                var bal = parseFloat(element.value) - parseFloat(document.getElementById('payment0').value);
+
+                var opnbal1 = parseFloat(document.getElementById('openbal1').value)
+                if (opnbal1 >= bal) {
+                    document.getElementById('payment1').value = bal
+                } else if (openbal1 == '0.0') {
+                    document.getElementById('payment1').value = '0'
+                } else {
+                    document.getElementById('payment1').value = opnbal1
+                }
+                var payment = parseFloat(document.getElementById('payment0').value)
+                var payment1 = parseFloat(document.getElementById('payment1').value);
+                var bal1 = parseFloat(element.value) - (payment + payment1);
+                var opnbal2 = parseFloat(document.getElementById('openbal2').value)
+                if (opnbal2 >= bal1) {
+                    document.getElementById('payment2').value = bal1
+                } else {
+                    document.getElementById('payment2').value = opnbal2
+                }
+                var payment2 = parseFloat(document.getElementById('payment2').value)
+                var bal2 = parseFloat(element.value) - (payment + payment1 + payment2)
+                var opnbal3 = parseFloat(document.getElementById('openbal3').value)
+                if (opnbal3 >= bal2) {
+                    document.getElementById('payment3').value = bal2
+                } else {
+                    document.getElementById('payment3').value = opnbal3
+                }
+                var payment3 = parseFloat(document.getElementById('payment3').value)
+                var bal3 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3)
+                var opnbal4 = parseFloat(document.getElementById('openbal4').value)
+                if (opnbal4 >= bal3) {
+                    document.getElementById('payment4').value = bal3
+                } else {
+                    document.getElementById('payment4').value = opnbal4
+                }
+                var payment4 = parseFloat(document.getElementById('payment4').value)
+                var bal4 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4)
+                var opnbal5 = parseFloat(document.getElementById('openbal5').value)
+                if (opnbal5 >= bal4) {
+                    document.getElementById('payment5').value = bal4
+                } else {
+                    document.getElementById('payment5').value = opnbal5
+                }
+                var payment5 = parseFloat(document.getElementById('payment5').value)
+                var bal5 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4 + payment5)
+            }else if(j==6){
+                var opnbal = parseFloat(document.getElementById('openbal0').value)
+               
+                if (opnbal >= parseFloat(element.value)) {
+                    document.getElementById('payment0').value = parseFloat(element.value)
+                } 
+                // else if (openbal == 0) {
+                //     document.getElementById('payment0').value = '0'
+                // } 
+                else {
+                    document.getElementById('payment0').value = opnbal
+                }
+                var bal = parseFloat(element.value) - parseFloat(document.getElementById('payment0').value);
+
+                var opnbal1 = parseFloat(document.getElementById('openbal1').value)
+                if (opnbal1 >= bal) {
+                    document.getElementById('payment1').value = bal
+                } else if (openbal1 == '0.0') {
+                    document.getElementById('payment1').value = '0'
+                } else {
+                    document.getElementById('payment1').value = opnbal1
+                }
+                var payment = parseFloat(document.getElementById('payment0').value)
+                var payment1 = parseFloat(document.getElementById('payment1').value);
+                var bal1 = parseFloat(element.value) - (payment + payment1);
+                var opnbal2 = parseFloat(document.getElementById('openbal2').value)
+                if (opnbal2 >= bal1) {
+                    document.getElementById('payment2').value = bal1
+                } else {
+                    document.getElementById('payment2').value = opnbal2
+                }
+                var payment2 = parseFloat(document.getElementById('payment2').value)
+                var bal2 = parseFloat(element.value) - (payment + payment1 + payment2)
+                var opnbal3 = parseFloat(document.getElementById('openbal3').value)
+                if (opnbal3 >= bal2) {
+                    document.getElementById('payment3').value = bal2
+                } else {
+                    document.getElementById('payment3').value = opnbal3
+                }
+                var payment3 = parseFloat(document.getElementById('payment3').value)
+                var bal3 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3)
+                var opnbal4 = parseFloat(document.getElementById('openbal4').value)
+                if (opnbal4 >= bal3) {
+                    document.getElementById('payment4').value = bal3
+                } else {
+                    document.getElementById('payment4').value = opnbal4
+                }
+                var payment4 = parseFloat(document.getElementById('payment4').value)
+                var bal4 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4)
+                var opnbal5 = parseFloat(document.getElementById('openbal5').value)
+                if (opnbal5 >= bal4) {
+                    document.getElementById('payment5').value = bal4
+                } else {
+                    document.getElementById('payment5').value = opnbal5
+                }
+                var payment5 = parseFloat(document.getElementById('payment5').value)
+                var bal5 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4 + payment5)
+                var opnbal6 = parseFloat(document.getElementById('openbal6').value)
+                if (opnbal6 >= bal5) {
+                    document.getElementById('payment6').value = bal5
+                } else {
+                    document.getElementById('payment6').value = opnbal6
+                }
+                var payment6 = parseFloat(document.getElementById('payment6').value)
+                var bal6 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4 + payment5 + payment6)
+            }else if(j==7){
+                var opnbal = parseFloat(document.getElementById('openbal0').value)
+               
+                if (opnbal >= parseFloat(element.value)) {
+                    document.getElementById('payment0').value = parseFloat(element.value)
+                } 
+                // else if (openbal == 0) {
+                //     document.getElementById('payment0').value = '0'
+                // } 
+                else {
+                    document.getElementById('payment0').value = opnbal
+                }
+                var bal = parseFloat(element.value) - parseFloat(document.getElementById('payment0').value);
+
+                var opnbal1 = parseFloat(document.getElementById('openbal1').value)
+                if (opnbal1 >= bal) {
+                    document.getElementById('payment1').value = bal
+                } else if (openbal1 == '0.0') {
+                    document.getElementById('payment1').value = '0'
+                } else {
+                    document.getElementById('payment1').value = opnbal1
+                }
+                var payment = parseFloat(document.getElementById('payment0').value)
+                var payment1 = parseFloat(document.getElementById('payment1').value);
+                var bal1 = parseFloat(element.value) - (payment + payment1);
+                var opnbal2 = parseFloat(document.getElementById('openbal2').value)
+                if (opnbal2 >= bal1) {
+                    document.getElementById('payment2').value = bal1
+                } else {
+                    document.getElementById('payment2').value = opnbal2
+                }
+                var payment2 = parseFloat(document.getElementById('payment2').value)
+                var bal2 = parseFloat(element.value) - (payment + payment1 + payment2)
+                var opnbal3 = parseFloat(document.getElementById('openbal3').value)
+                if (opnbal3 >= bal2) {
+                    document.getElementById('payment3').value = bal2
+                } else {
+                    document.getElementById('payment3').value = opnbal3
+                }
+                var payment3 = parseFloat(document.getElementById('payment3').value)
+                var bal3 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3)
+                var opnbal4 = parseFloat(document.getElementById('openbal4').value)
+                if (opnbal4 >= bal3) {
+                    document.getElementById('payment4').value = bal3
+                } else {
+                    document.getElementById('payment4').value = opnbal4
+                }
+                var payment4 = parseFloat(document.getElementById('payment4').value)
+                var bal4 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4)
+                var opnbal5 = parseFloat(document.getElementById('openbal5').value)
+                if (opnbal5 >= bal4) {
+                    document.getElementById('payment5').value = bal4
+                } else {
+                    document.getElementById('payment5').value = opnbal5
+                }
+                var payment5 = parseFloat(document.getElementById('payment5').value)
+                var bal5 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4 + payment5)
+                var opnbal6 = parseFloat(document.getElementById('openbal6').value)
+                if (opnbal6 >= bal5) {
+                    document.getElementById('payment6').value = bal5
+                } else {
+                    document.getElementById('payment6').value = opnbal6
+                }
+                var payment6 = parseFloat(document.getElementById('payment6').value)
+                var bal6 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4 + payment5 + payment6)
+                var opnbal7 = parseFloat(document.getElementById('openbal7').value)
+                if (opnbal7 >= bal6) {
+                    document.getElementById('payment7').value = bal6
+                } else {
+                    document.getElementById('payment7').value = opnbal7
+                }
+                var payment7 = parseFloat(document.getElementById('payment7').value)
+                var bal7 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4 + payment5 + payment6 + payment7)
+            }else if(j==8){
+                var opnbal = parseFloat(document.getElementById('openbal0').value)
+               
+                if (opnbal >= parseFloat(element.value)) {
+                    document.getElementById('payment0').value = parseFloat(element.value)
+                } 
+                // else if (openbal == 0) {
+                //     document.getElementById('payment0').value = '0'
+                // } 
+                else {
+                    document.getElementById('payment0').value = opnbal
+                }
+                var bal = parseFloat(element.value) - parseFloat(document.getElementById('payment0').value);
+
+                var opnbal1 = parseFloat(document.getElementById('openbal1').value)
+                if (opnbal1 >= bal) {
+                    document.getElementById('payment1').value = bal
+                } else if (openbal1 == '0.0') {
+                    document.getElementById('payment1').value = '0'
+                } else {
+                    document.getElementById('payment1').value = opnbal1
+                }
+                var payment = parseFloat(document.getElementById('payment0').value)
+                var payment1 = parseFloat(document.getElementById('payment1').value);
+                var bal1 = parseFloat(element.value) - (payment + payment1);
+                var opnbal2 = parseFloat(document.getElementById('openbal2').value)
+                if (opnbal2 >= bal1) {
+                    document.getElementById('payment2').value = bal1
+                } else {
+                    document.getElementById('payment2').value = opnbal2
+                }
+                var payment2 = parseFloat(document.getElementById('payment2').value)
+                var bal2 = parseFloat(element.value) - (payment + payment1 + payment2)
+                var opnbal3 = parseFloat(document.getElementById('openbal3').value)
+                if (opnbal3 >= bal2) {
+                    document.getElementById('payment3').value = bal2
+                } else {
+                    document.getElementById('payment3').value = opnbal3
+                }
+                var payment3 = parseFloat(document.getElementById('payment3').value)
+                var bal3 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3)
+                var opnbal4 = parseFloat(document.getElementById('openbal4').value)
+                if (opnbal4 >= bal3) {
+                    document.getElementById('payment4').value = bal3
+                } else {
+                    document.getElementById('payment4').value = opnbal4
+                }
+                var payment4 = parseFloat(document.getElementById('payment4').value)
+                var bal4 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4)
+                var opnbal5 = parseFloat(document.getElementById('openbal5').value)
+                if (opnbal5 >= bal4) {
+                    document.getElementById('payment5').value = bal4
+                } else {
+                    document.getElementById('payment5').value = opnbal5
+                }
+                var payment5 = parseFloat(document.getElementById('payment5').value)
+                var bal5 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4 + payment5)
+                var opnbal6 = parseFloat(document.getElementById('openbal6').value)
+                if (opnbal6 >= bal5) {
+                    document.getElementById('payment6').value = bal5
+                } else {
+                    document.getElementById('payment6').value = opnbal6
+                }
+                var payment6 = parseFloat(document.getElementById('payment6').value)
+                var bal6 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4 + payment5 + payment6)
+                var opnbal7 = parseFloat(document.getElementById('openbal7').value)
+                if (opnbal7 >= bal6) {
+                    document.getElementById('payment7').value = bal6
+                } else {
+                    document.getElementById('payment7').value = opnbal7
+                }
+                var payment7 = parseFloat(document.getElementById('payment7').value)
+                var bal7 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4 + payment5 + payment6 + payment7)
+                var opnbal8 = parseFloat(document.getElementById('openbal8').value)
+                if (opnbal8 >= bal7) {
+                    document.getElementById('payment8').value = bal7
+                } else {
+                    document.getElementById('payment8').value = opnbal8
+                }
+                var payment8 = parseFloat(document.getElementById('payment8').value)
+                var bal8 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4 + payment5 + payment6 + payment7 + payment8)
+            }else if(j==9){
+                var opnbal = parseFloat(document.getElementById('openbal0').value)
+               
+                if (opnbal >= parseFloat(element.value)) {
+                    document.getElementById('payment0').value = parseFloat(element.value)
+                } 
+                // else if (openbal == 0) {
+                //     document.getElementById('payment0').value = '0'
+                // } 
+                else {
+                    document.getElementById('payment0').value = opnbal
+                }
+                var bal = parseFloat(element.value) - parseFloat(document.getElementById('payment0').value);
+
+                var opnbal1 = parseFloat(document.getElementById('openbal1').value)
+                if (opnbal1 >= bal) {
+                    document.getElementById('payment1').value = bal
+                } else if (openbal1 == '0.0') {
+                    document.getElementById('payment1').value = '0'
+                } else {
+                    document.getElementById('payment1').value = opnbal1
+                }
+                var payment = parseFloat(document.getElementById('payment0').value)
+                var payment1 = parseFloat(document.getElementById('payment1').value);
+                var bal1 = parseFloat(element.value) - (payment + payment1);
+                var opnbal2 = parseFloat(document.getElementById('openbal2').value)
+                if (opnbal2 >= bal1) {
+                    document.getElementById('payment2').value = bal1
+                } else {
+                    document.getElementById('payment2').value = opnbal2
+                }
+                var payment2 = parseFloat(document.getElementById('payment2').value)
+                var bal2 = parseFloat(element.value) - (payment + payment1 + payment2)
+                var opnbal3 = parseFloat(document.getElementById('openbal3').value)
+                if (opnbal3 >= bal2) {
+                    document.getElementById('payment3').value = bal2
+                } else {
+                    document.getElementById('payment3').value = opnbal3
+                }
+                var payment3 = parseFloat(document.getElementById('payment3').value)
+                var bal3 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3)
+                var opnbal4 = parseFloat(document.getElementById('openbal4').value)
+                if (opnbal4 >= bal3) {
+                    document.getElementById('payment4').value = bal3
+                } else {
+                    document.getElementById('payment4').value = opnbal4
+                }
+                var payment4 = parseFloat(document.getElementById('payment4').value)
+                var bal4 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4)
+                var opnbal5 = parseFloat(document.getElementById('openbal5').value)
+                if (opnbal5 >= bal4) {
+                    document.getElementById('payment5').value = bal4
+                } else {
+                    document.getElementById('payment5').value = opnbal5
+                }
+                var payment5 = parseFloat(document.getElementById('payment5').value)
+                var bal5 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4 + payment5)
+                var opnbal6 = parseFloat(document.getElementById('openbal6').value)
+                if (opnbal6 >= bal5) {
+                    document.getElementById('payment6').value = bal5
+                } else {
+                    document.getElementById('payment6').value = opnbal6
+                }
+                var payment6 = parseFloat(document.getElementById('payment6').value)
+                var bal6 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4 + payment5 + payment6)
+                var opnbal7 = parseFloat(document.getElementById('openbal7').value)
+                if (opnbal7 >= bal6) {
+                    document.getElementById('payment7').value = bal6
+                } else {
+                    document.getElementById('payment7').value = opnbal7
+                }
+                var payment7 = parseFloat(document.getElementById('payment7').value)
+                var bal7 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4 + payment5 + payment6 + payment7)
+                var opnbal8 = parseFloat(document.getElementById('openbal8').value)
+                if (opnbal8 >= bal7) {
+                    document.getElementById('payment8').value = bal7
+                } else {
+                    document.getElementById('payment8').value = opnbal8
+                }
+                var payment8 = parseFloat(document.getElementById('payment8').value)
+                var bal8 = parseFloat(element.value) - (payment + payment1 + payment2 + payment3 + payment4 + payment5 + payment6 + payment7 + payment8)
+                var opnbal9 = parseFloat(document.getElementById('openbal9').value)
+                if (opnbal9 >= bal8) {
+                    document.getElementById('payment9').value = bal8
+                } else {
+                    document.getElementById('payment9').value = opnbal9
+                }
+                var payment9 = parseFloat(document.getElementById('payment9').value)
+          
+            }
+                var paymentlistunsorted = [payment, payment1, payment2, payment3, payment4, payment5, payment6, payment7, payment8, payment9]
+            
+                var paymentlist = []
+                for (i in paymentlistunsorted) {
+                    if (isNaN(paymentlistunsorted[i]) == false) {
+                        paymentlist.push(paymentlistunsorted[i])
+                    }
+                }
+                
+                var sumpaym = 0
+                for (i in paymentlist) {
+                    sumpaym += paymentlist[i]
+                }
+                amtcred = parseFloat(element.value) - sumpaym
+                document.getElementById('amtoapply').value = sumpaym;
+                document.getElementById('amtcredit').value = amtcred;
+            } else {
+                document.getElementById(divId).innerHTML = "0.00";
+            }
+        }
+
+        function addagain() {
+
+        if(j==0){
+            var payment = parseFloat(document.getElementById('payment0').value)
+        }else if(j==1){
+            var payment = parseFloat(document.getElementById('payment0').value)
+        
+            var payment1 = parseFloat(document.getElementById('payment1').value)
+        }else if(j==2){
+            var payment = parseFloat(document.getElementById('payment0').value)
+        
+            var payment1 = parseFloat(document.getElementById('payment1').value)
+            var payment2 = parseFloat(document.getElementById('payment2').value)
+        }else if(j==3){
+            var payment = parseFloat(document.getElementById('payment0').value)
+        
+            var payment1 = parseFloat(document.getElementById('payment1').value)
+            var payment2 = parseFloat(document.getElementById('payment2').value) 
+            var payment3 = parseFloat(document.getElementById('payment3').value)
+        }else if(j==4){
+            var payment = parseFloat(document.getElementById('payment0').value)
+        
+            var payment1 = parseFloat(document.getElementById('payment1').value)
+            var payment2 = parseFloat(document.getElementById('payment2').value) 
+            var payment3 = parseFloat(document.getElementById('payment3').value)  
+            var payment4 = parseFloat(document.getElementById('payment4').value)
+        }else if(j==5){
+            var payment = parseFloat(document.getElementById('payment0').value)
+        
+            var payment1 = parseFloat(document.getElementById('payment1').value)
+            var payment2 = parseFloat(document.getElementById('payment2').value) 
+            var payment3 = parseFloat(document.getElementById('payment3').value)  
+            var payment4 = parseFloat(document.getElementById('payment4').value) 
+            var payment5 = parseFloat(document.getElementById('payment5').value)
+        }else if(j==6){
+            var payment = parseFloat(document.getElementById('payment0').value)
+        
+            var payment1 = parseFloat(document.getElementById('payment1').value)
+            var payment2 = parseFloat(document.getElementById('payment2').value) 
+            var payment3 = parseFloat(document.getElementById('payment3').value)  
+            var payment4 = parseFloat(document.getElementById('payment4').value) 
+            var payment5 = parseFloat(document.getElementById('payment5').value)  
+            var payment6 = parseFloat(document.getElementById('payment6').value)
+        }else if(j==7){
+            var payment = parseFloat(document.getElementById('payment0').value)
+        
+            var payment1 = parseFloat(document.getElementById('payment1').value)
+            var payment2 = parseFloat(document.getElementById('payment2').value) 
+            var payment3 = parseFloat(document.getElementById('payment3').value)  
+            var payment4 = parseFloat(document.getElementById('payment4').value) 
+            var payment5 = parseFloat(document.getElementById('payment5').value)  
+            var payment6 = parseFloat(document.getElementById('payment6').value)   
+            var payment7 = parseFloat(document.getElementById('payment7').value)
+        }else if(j==8){
+            var payment = parseFloat(document.getElementById('payment0').value)
+        
+            var payment1 = parseFloat(document.getElementById('payment1').value)
+            var payment2 = parseFloat(document.getElementById('payment2').value) 
+            var payment3 = parseFloat(document.getElementById('payment3').value)  
+            var payment4 = parseFloat(document.getElementById('payment4').value) 
+            var payment5 = parseFloat(document.getElementById('payment5').value)  
+            var payment6 = parseFloat(document.getElementById('payment6').value)   
+            var payment7 = parseFloat(document.getElementById('payment7').value)
+            var payment8 = parseFloat(document.getElementById('payment8').value)
+        }else if(j==9){
+            var payment = parseFloat(document.getElementById('payment0').value)
+        
+            var payment1 = parseFloat(document.getElementById('payment1').value)
+            var payment2 = parseFloat(document.getElementById('payment2').value) 
+            var payment3 = parseFloat(document.getElementById('payment3').value)  
+            var payment4 = parseFloat(document.getElementById('payment4').value) 
+            var payment5 = parseFloat(document.getElementById('payment5').value)  
+            var payment6 = parseFloat(document.getElementById('payment6').value)   
+            var payment7 = parseFloat(document.getElementById('payment7').value)
+            var payment8 = parseFloat(document.getElementById('payment8').value)  
+            var payment9 = parseFloat(document.getElementById('payment9').value)
+        }
+            var paymentlistunsorted = [payment, payment1, payment2, payment3, payment4, payment5, payment6, payment7, payment8, payment9]
+            var paymentlist = []
+            for (i in paymentlistunsorted) {
+                if (isNaN(paymentlistunsorted[i]) == false) {
+                    paymentlist.push(paymentlistunsorted[i])
+                }
+            }
+            var sumpaym = 0
+            for (i in paymentlist) {
+                sumpaym += paymentlist[i]
+            }
+            var amtrcd = parseFloat(document.getElementById('amtrcvd').value)
+            if (sumpaym > amtrcd) {
+
+            
+                document.getElementById('amtoapply').value = sumpaym;
+                document.getElementById('amre').innerHTML = sumpaym;
+                
+                temp = amtrcd - sumpaym
+               
+                document.getElementById('amtcredit').value = temp ;
+            } else {
+                
+                document.getElementById('amtoapply').value = sumpaym;
+                document.getElementById('amre').innerHTML = sumpaym;
+               
+                temp = amtrcd - sumpaym
+                document.getElementById('amtcredit').value = temp ;
+            }
+
+        }
+    </script>
+
+
+    <script>
+        function addagain() {
+            var totalAmountDue = parseFloat(document.getElementById('openbal0').value);
+            var totalPayment = 0;
+    
+            for (var i = 0; i <= j; i++) {
+                var paymentField = document.getElementById('payment' + i);
+                if (paymentField) {
+                    var payment = parseFloat(paymentField.value);
+                    if (!isNaN(payment)) {
+                        totalPayment += payment;
+                    }
+                }
+            }
+    
+            var balanceAmount = totalAmountDue - totalPayment;
+            document.getElementById('amtcredit').value = balanceAmount;
+    
+            // Calculate the total payment amount from all payment fields
+            let totalPaymentForAmountToApply = 0;
+            $('input[name="payment[]"]').each(function() {
+                totalPaymentForAmountToApply += parseFloat($(this).val()) || 0;
+            });
+    
+            // Update the "Amount to Apply" field with the total payment
+            $('#amtoapply').val(totalPaymentForAmountToApply);
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        // Attach an input event listener to all "Payment" input fields with the name "payment[]"
+        $('input[name="payment[]"]').on('input', function() {
+            updateAmounts();
+        });
+    
+        function updateAmounts() {
+            let totalPayment = 0;
+    
+            // Calculate the total payment amount from all "Payment" input fields
+            $('input[name="payment[]"]').each(function() {
+                totalPayment += parseFloat($(this).val()) || 0;
+            });
+    
+            // Update the "Amount to Apply" field
+            $('#amtoapply').val(totalPayment);
+    
+            // Update the "Balance Amount" field
+            var totalAmountDue = parseFloat(document.getElementById('openbal0').value);
+            var balanceAmount = totalAmountDue - totalPayment;
+            $('#amtcredit').val(balanceAmount);
+        }
+    
+        // Call the function initially to calculate and display initial values
+        updateAmounts();
+    </script>
+    
+    
+    
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Include jQuery -->
+
+<script>
+    $(document).ready(function () {
+        $('#select').on('change', function () {
+            var select = $('#select').val();
+            $.ajax({
+                type: "GET",
+                url: "{% url 'getvendordata3' %}",
+                data: {
+                    id: select
+                },
+                success: function (response) {
+                    var json_data = JSON.parse(response);
+                    if (json_data.length > 0) {
+                        var vendorData = json_data[0]; // Assuming you are expecting one vendor data
+                        $('#email').val(vendorData.email);
+                        $('#mailaddr').val(vendorData.street + '\n' + vendorData.city + '\n' + vendorData.state + '\n' + vendorData.pincode + '\n' + vendorData.country);
+
+                        // Show email and GST treatment fields
+                        $('#emailField, #gstTypeField').show();
+                        $('#gstinField').show(); // Show GST Number field if it has a value
+
+                        // Set values for email and GST treatment fields
+                        $('#email').val(vendorData.email);
+                        $('#gsttype').val(vendorData.gsttype);
+
+                        // Check if GST Number has a value, hide it if empty
+                        if (vendorData.gstin) {
+                            $('#gstin').val(vendorData.gstin);
+                        } else {
+                            $('#gstinField').hide();
+                        }
+                    } else {
+                        // Handle the case where no data was found for the selected ID.
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // Handle the AJAX error.
+                }
+            });
+        });
+    });
+</script>
+
+    
+<script>
+    function showFieldsForPayment(paymentType) {
+        var bankFields = document.getElementById("bankFields");
+        var chequeFields = document.getElementById("chequeFields");
+        var upiFields = document.getElementById("upiFields");
+
+        bankFields.style.display = (paymentType === "bank") ? "block" : "none";
+        chequeFields.style.display = (paymentType === "cheque") ? "block" : "none";
+        upiFields.style.display = (paymentType === "upi") ? "block" : "none";
+    }
+
+    window.onload = function() {
+        var paymentRadios = document.getElementsByName("paid_through");
+        var bankFields = document.getElementById("bankFields");
+        var chequeFields = document.getElementById("chequeFields");
+        var upiFields = document.getElementById("upiFields");
+
+        bankFields.style.display = "none"; // Initially hide the bank fields
+        chequeFields.style.display = "none"; // Initially hide the cheque fields
+        upiFields.style.display = "none"; // Initially hide the upi fields
+
+        paymentRadios.forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                showFieldsForPayment(this.value);
+            });
+        });
+    }
+</script>
+
+<!-- <script>
+    $(document).ready(function() {
+        $('#amre').on('input', function() {
+            var balance = parseFloat($('#amountdue').val());
+            var amount = parseFloat($(this).val());
+            var difference = amountdue - amre;
+            
+            // Update the difference input field with the calculated value
+            $('#amtcredit').val(amtcredit);
+        });
+    });
+</script> -->
+
+<script>
+    function updateAmountFields() {
+        var totalPayment = 0;
+        for (var i = 0; i <= j; i++) {
+            var paymentField = document.getElementById('payment' + i);
+            if (paymentField) {
+                var payment = parseFloat(paymentField.value);
+                if (!isNaN(payment)) {
+                    totalPayment += payment;
+                }
+            }
+        }
+    
+        // Update "Amount" and "Amount to Apply" fields with the total payment
+        var amountField = document.getElementById('amtrcvd');
+        var amountToApplyField = document.getElementById('amtoapply');
+    
+        if (amountField && amountToApplyField) {
+            amountField.value = totalPayment;
+            amountToApplyField.value = totalPayment;
+        }
+    }
+    </script>
+
+    <!-- <script>
+        $(document).on("click", "#CreateOption", function (event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+        
+            $.ajax({
+                type: "POST",
+                url: "{% url 'add_option' %}",
+                data: {
+                    newmethod: $("input[name='newmethod']").val(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    $("#Add_option").modal("hide"); // Close the modal
+                    reloadVendor(); // Refresh the dropdown
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+        
+    
+        function reloadVendor() {
+            $.ajax({
+                url: "{% url 'option_dropdown' %}",
+                type: "GET",
+                dataType: "json",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    var dropdown = $('#paymeth');
+                    dropdown.empty();
+        
+                    // Add the default options
+                    dropdown.append($('<option>').attr('value', 'Bank Transfer').text('Bank Transfer'));
+                    dropdown.append($('<option>').attr('value', 'Cash').text('Cash'));
+                    dropdown.append($('<option>').attr('value', 'Cheque').text('Cheque'));
+                    dropdown.append($('<option>').attr('value', 'Credit Card').text('Credit Card'));
+        
+                    // Add the new options from the server
+                    $.each(data, function (id, name) {
+                        dropdown.append($("<option>").attr("value", id).text(name));
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+        
+    </script>
+
+    <script>
+        $('#paymeth').on('change', function() {
+            var selectedPaymentMethod = $(this).val();
+    
+            // Hide all payment method fields by default
+            $('.pymnt-methd-inp').addClass('d-none');
+            $('.pymnt-methd-inp').removeClass('d-flex');
+    
+            if (selectedPaymentMethod === 'Bank Transfer') {
+                // Show the bank and account number fields for Bank Transfer
+                $('#bankacc-field').removeClass('d-none');
+                $('#bankacc-field').addClass('d-flex');
+    
+                // Simulate change event on bankacc_inp to trigger account number update
+                $('#bankacc_inp').change();
+            } else if (selectedPaymentMethod === 'UPI') {
+                // Show the UPI fields
+                $('#upi-field').removeClass('d-none');
+                $('#upi-field').addClass('d-flex');
+            } else if (selectedPaymentMethod === 'Cheque') {
+                // Show the UPI fields
+                $('#cc-field').removeClass('d-none');
+                $('#cc-field').addClass('d-flex');
+            } else if (selectedPaymentMethod === 'Cash') {
+                // Show the Cash fields
+                // Add similar conditions for other payment methods
+            }
+        });
+    
+        $('#bankacc_inp').on('change', function() {
+            var selectedBankName = $(this).val();
+    
+            // Make an AJAX request to get the account number for the selected bank
+            $.ajax({
+                url: "{% url 'get_account_number' %}",
+                type: "POST",
+                data: {
+                    bankName: selectedBankName,
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                },
+                success: function(data) {
+                    if (data.status) {
+                        // Populate the account number field with the received data
+                        $('#account_number').val(data.accountNumber);
+                    } else {
+                        alert('Something went wrong.!');
+                    }
+                }
+            });
+        });
+    </script> -->
+
+    <script>
+        $(document).ready(function() {
+          $("#paymeth").change(function() {
+            var x=$('#paymeth').val();
+            if(x==='cash'){
+              $('#chequediv').hide()
+              $('#bnkdiv').hide()
+              $('#upidiv').hide()
+              document.getElementById('cheque_id').value=null
+              document.getElementById('upi_id').value=null
+            }else if(x==='cheque'){
+              $('#chequediv').show()
+              $('#bnkdiv').hide()
+              $('#upidiv').hide()
+              document.getElementById('upi_id').value=null
+            }else if(x==='upi'){
+              $('#upidiv').show()
+              $('#bnkdiv').hide()
+              $('#chequediv').hide()
+              document.getElementById('cheque_id').value=null
+            }else{
+              $('#bnkdiv').show()
+              $('#chequediv').hide()
+              $('#upidiv').hide()
+              document.getElementById('cheque_id').value=null
+              document.getElementById('upi_id').value=null
+    
+$.ajax({
+    type: "GET",
+    url: "{% url 'get_bankdata' %}",
+    data: {
+        id: x,
+    },
+    success: function (response) {
+        document.getElementById('cheque_id').value = null
+        document.getElementById('upi_id').value = null
+        document.getElementById("bnk_id").value = response.account_number;
+    }
+});
+
+            }
+          });
+        });
+    </script>
+
+    
+    
+
+{% endblock %}

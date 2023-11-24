@@ -1,0 +1,186 @@
+<!-- reshna-attendance -->
+{% extends 'app1/base.html' %}
+{% block body %}
+      {% load static %}
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+
+    <style>
+        tr:hover{
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+  
+  
+
+        <div class="page-content" id="test">
+            <div class="card radius-15">
+                <div class="card-body">
+                    <div class="card-title">
+                        <center><h2 class="mb-0">Attendance</h2></center>
+                        <hr>
+                       
+                        <div class="btn-group col-md-2" style="float: right;">
+                            <a class="btn btn-outline-info text-grey" onclick="ExportToExcel('xlsx')">Export To Excel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card radius-15">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="d-flex">
+                                <input type="text" id="search" class="form-control" placeholder="Search.." autocomplete="off">
+                                <center><i class="fa fa-search form-control" style="width: 60px;"></i></center>
+                            </div>    
+                        </div>
+                        <div class="col-md-2">
+                          
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-outline-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Sort By
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="{%url 'attendancepagee'%}">All</a>
+                                    <!-- <a class="dropdown-item" href="">Month</a>
+                                    <a class="dropdown-item" href="">Year</a>-->
+                                    <!-- <a id="sort-by-month" class="dropdown-item" href="#">Month</a>
+                                    <a id="sort-by-year" class="dropdown-item" href="#">Year</a> -->
+                
+                                        <a class="dropdown-item" href="javascript:void(0);" onclick="sortTableByMonthAsc();">Month</a>
+                                        <a class="dropdown-item" href="javascript:void(0);" onclick="sortTableByYearAsc();">Year</a>
+                                   
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5"></div>
+                        <div class="col-md-2">
+                          
+                            <a href="{%url 'attendance_addpage'%}" class="btn btn-outline-info fa fa-plus" role="button"> &nbsp;New</a>
+                        </div>
+                    </div>
+                    <div class="container-fluid">
+                        <table class="table table-responsive-md mt-4" id="table1">
+                            <thead>
+                                <tr><th class="text-center">#</th>
+                                    <th class="text-center">Employee Name</th>
+                                    <th class="text-center">Year</th>
+                                    <th class="text-center">Month</th>
+                                    <th class="text-center">Working Days</th>
+                                    <th class="text-center">Holidays Days</th>
+                                    <th class="text-center">Total Absent</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table">
+                                {% for entry in employee_attendance %}
+                                <!-- <tr> -->
+                                    <tr data-employee="{{ entry.employee }}" data-year="{{ entry.year }}" data-month="{{ entry.month }}" class="attendance-row">
+                                    <td class="text-center">{{ forloop.counter }}</td>
+                                    <td class="text-center">{{ entry.employee }}</td>
+                                    <td class="text-center">{{ entry.year }}</td>
+                                    <td class="text-center">{{ entry.month }}</td>
+                                    <td class="text-center">{{ entry.working_days }}</td>
+                                    <td class="text-center">{{ entry.holidays }}</td>
+                                    <td class="text-center">{{ entry.absent_days }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    
+
+                   
+                    </div>
+                </div>
+            </div>
+        </div>
+
+      
+        <script>
+            var $rows = $('#table tr');
+            $('#search').keyup(function() {
+                var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+                
+                $rows.show().filter(function() {
+                    var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                    return !~text.indexOf(val);
+                }).hide();
+            });
+
+        function ExportToExcel(type, fn, dl) {
+        var elt = document.getElementById('table1');
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return dl ?
+            XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+            XLSX.writeFile(wb, fn || ('holidays.' + (type || 'xlsx')));
+    }
+</script>
+
+<script>
+    // Function to sort table rows by month (ascending order)
+// Function to sort table rows by month (ascending order)
+function sortTableByMonthAsc() {
+    var rows = $('tr.attendance-row').get();
+    rows.sort(function (a, b) {
+        var monthA = $(a).data('month');
+        var monthB = $(b).data('month');
+        var yearA = $(a).data('year');
+        var yearB = $(b).data('year');
+
+        var monthOrder = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        var monthAIndex = monthOrder.indexOf(monthA);
+        var monthBIndex = monthOrder.indexOf(monthB);
+
+        if (yearA === yearB) {
+            return monthAIndex - monthBIndex;
+        } else {
+            return yearA - yearB;
+        }
+    });
+    $.each(rows, function (index, row) {
+        $('#table1').append(row);
+    });
+}
+
+// Function to sort table rows by year (ascending order)
+function sortTableByYearAsc() {
+    var rows = $('tr.attendance-row').get();
+    rows.sort(function (a, b) {
+        var yearA = $(a).data('year');
+        var yearB = $(b).data('year');
+        return yearA - yearB;
+    });
+    $.each(rows, function (index, row) {
+        $('#table1').append(row);
+    });
+}
+
+</script>
+<script>
+    $(document).ready(function () {
+        // Handle row clicks
+        $('.attendance-row').click(function () {
+            var $row = $(this);
+    
+            var employee = $row.data('employee').replace(/ /g, '_'); // Replace spaces with underscores
+            var year = $row.data('year');
+            var month = $row.data('month');
+    
+            console.log(`Employee: ${employee}, Year: ${year}, Month: ${month}`);
+    
+            var url = `/app1/attendance_view/${year}/${month}/${employee}/`;
+    
+            // Navigate to the selected year, month, and employee page
+            window.location.href = url;
+        });
+    });
+    </script>
+    
+
+
+{% endblock %}
+

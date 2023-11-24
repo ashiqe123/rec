@@ -1,0 +1,255 @@
+{% extends 'app1/base.html' %}
+{% block body %}
+{% load static %}
+    {% if user.is_authenticated %}
+  
+    
+    <script src="https://kit.fontawesome.com/46db3e6bea.js" crossorigin="anonymous"></script>
+    
+    
+
+    
+        <style>
+            @import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+            body{
+            background: #f2f2f2;
+            font-family: 'Open Sans', sans-serif;
+            }
+
+            .search {
+            width: 100%;
+            position: relative;
+            display: flex;
+            }
+
+            .searchTerm {
+            width: 100%;
+            border: 3px solid #7690da;
+            border-right: none;
+            padding: 5px;
+            height: 36px;
+            border-radius: 5px 0 0 5px;
+            outline: none;
+            color: #9DBFAF;
+            
+            }
+
+            .searchTerm:focus{
+            color:#7690da;
+            }
+
+            .searchButton {
+            width: 40px;
+            height: 36px;
+            border: 1px solid #7690da;
+            background:#7690da;
+            text-align: center;
+            color: #fff;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-size: 20px;
+            }
+
+            .table-row{
+                    cursor:pointer;
+            }
+            /* .table-row:hover{
+                background-color: rgb(217, 232, 51);
+            } */
+
+            /*Resize the wrap to see the search bar change!*/
+            .wrap{
+            width: 40%;
+            /* position: absolute;
+            top: 50%;
+            left: 50%; */
+            /* transform: translate(-50%, -50%); */
+            }
+        </style>
+        
+        <div class="page-content">
+            <div class="card radius-15">
+                <div class="card-body">
+                    <div class="card-title">
+                        <center><h2 class="mb-0">INACTIVE PRICE LIST</h2></center>
+                        <hr>
+                        <!-- <div class="btn-group col-md-2" style="float: right;">
+                            <a class="btn btn-outline-info text-grey" onclick="ExportToExcel('xlsx')">Export To Excel</a>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+            <div class="card radius-15">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <input type="text" id="search" placeholder="Search..." class="form-control" autocomplete="off" 
+                            style="margin-top: 8px; background-color: #2f516f;color: white;">
+    
+                        </div> 
+                        <div class="col-md-2" style="width: 40%; margin-top: 9px;">
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-outline-info dropdown-toggle text-grey"
+                                        data-toggle="dropdown"> Sort by
+                                </button>
+                                <div class="dropdown-menu " style="background-color: black;">
+                                    <a class="dropdown-item	" href="{% url 'pricelist' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" > All
+                                    <!-- <icon class=" fas fa-arrow-down"></icon> -->
+                               </a>
+                                <a class="dropdown-item	" href="{% url 'sortemployeename2' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" > Name
+                                    <!-- <icon class=" fas fa-arrow-down"></icon> -->
+                               </a>
+                                 <!-- <a class="dropdown-item  " href="{% url 'est_num_desc' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Estimate Number <icon class=" fas fa-arrow-up"></icon></a> -->
+
+                                <a class="dropdown-item " href="{% url 'sort_by_types' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center; " >Type</a>
+                                <!-- <a class="dropdown-item " href="{% url 'est_date_desc' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Date <icon class=" fas fa-arrow-up"></icon></a> -->
+
+                                
+                                        
+                                </div> 
+                            </div>
+                        </div>
+                        <div class="col-md-3"></div>
+
+                        <div class="col-md-1 mx-5" style="width: 40%; margin-top: 8px;">
+
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-outline-info dropdown-toggle   text-grey"
+                                        data-toggle="dropdown"> filter by
+                                </button>
+                                    <div class="dropdown-menu" style="background-color: black;">
+                                        <a class="dropdown-item" href="{% url 'pricelist' %}"
+                                        style="height: 40px; font-size: 15px; color: white;" >All</a>
+                                        <a class="dropdown-item" href="{% url 'plactive' %}"
+                                        style="height: 40px; font-size: 15px; color: white;">Active</a>
+                                        <a class="dropdown-item" href="{% url 'plinactive' %}"
+                                        style="height: 40px; font-size: 15px; color: white;">Inactive</a>
+                                       
+                                    </div> 
+                            </div>
+                        </div>
+
+                        <div class="col-md-2" >
+                            <a href="{% url 'new_price_list' %}" >
+                                <button id="myBtn" class="btn btn-outline-info  text-grey" style="margin-top: 8px;">+ Price List</button>
+                            </a>
+                        </div>
+
+                    </div>
+                    <div class="container-fluid">
+                        <table class="table table-responsive-md mt-4 table-hover" id="tbl_exporttable_to_xls">
+                            <thead>
+                                <tr>
+                                    <th>NAME</th>
+                                    <th>DESCRIPTION</th>
+                                    <th>TYPE</th>
+                                    <th>ITEM RATE</th>
+                                    <th>ROUNDING</th>
+                                    <th>STATUS</th>
+                                    <th>DETAILS</th>
+                           
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for emp in employee %}
+                                    
+                                        <tr  class="table-row " >
+                                            <td ><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"> {{ emp.name }}</a></td>
+
+                                            <!-- <div  data-toggle="tooltip" data-placement="top" title="{{ a.notes }}">
+                                                <i class="fa fa-commenting" aria-hidden="true"></i>
+
+                                            </div> -->
+
+                                            <td>
+                                                <a class="idsr" style="list-style: none;" data-toggle="tooltip" data-placement="top" href="{% url 'pricelist_viewpage' emp.id %}" title="{{ emp.description }}">
+                                                  <i class="fa fa-commenting" aria-hidden="true"></i>
+                                                </a>
+                                              </td>
+                                              
+                                            <th><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"> {{ emp.types }}</a></th>
+                                            <th>
+                                                <a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}">
+                                                    {% if emp.item_rate == "Customized individual rate" %}
+                                                        Customized individual rate
+                                                    {% elif emp.upordown == "Markup" %}
+                                                        Markup the item rates by a percentage
+                                                    {% elif emp.upordown == "Markdown" %}
+                                                        Markdown the item rates by a percentage
+                                                    
+                                                    {% else %}
+                                                        {{ emp.item_rate }}
+                                                    {% endif %}
+                                                </a>
+                                            </th>
+                                            <td>
+                                                {% if emp.item_rate == "Customized individual rate" %}
+                                                    - - - - -
+                                                {% elif emp.upordown == "Markup" or emp.upordown == "Markdown" %}
+                                                    {{ emp.roundoffto }}
+                                                {% else %}
+                                                    {{ emp.item_rate }}
+                                                {% endif %}
+                                            </td>
+                                            
+                                            
+
+                                            {% if emp.is_active %}
+                                            <td>Active</td>
+                                            {% else %}
+                                            <td>Inactive</td>
+                                            {% endif %}
+                                            
+                                            {% if emp.item_rate == "Customized individual rate" %}
+                                            <td><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"></a>Per Item Rate</a></td>
+                                            {% else %}
+                                            <td> <a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}">{{emp.percentage}}%   {{emp.upordown}}</a></td>
+                                            {% endif %}
+                                            
+                                            
+                                            
+                                        </tr>
+                               
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+
+        <script type="text/javascript">function ExportToExcel(type, fn, dl) {
+                var elt = document.getElementById('tbl_exporttable_to_xls');
+                var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+                return dl ?
+                    XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+                    XLSX.writeFile(wb, fn || ('Employees.' + (type || 'xlsx')));
+            }
+            
+        </script>
+        <script>
+
+            $(document).ready(function() {
+                var $rows = $('.table tbody tr');
+                $('#search').keyup(function() {
+                    var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+                    $rows.show().filter(function() {
+                        console.log($rows.show())
+        
+                        var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                        console.log(text)
+                        return !~text.indexOf(val);
+                    }).hide();
+                });
+            });
+        </script>
+    {% endif %}
+{% endblock %}

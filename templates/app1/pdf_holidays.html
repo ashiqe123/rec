@@ -1,0 +1,83 @@
+<!-- reshna-holidays -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fin sYs</title>
+   
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    
+    
+</head>
+<style>
+    
+    
+    .table
+    {
+        text-align: center;
+        padding-top: 6px;
+        font-size: 1.1em;
+        background-color:azure
+       
+    }
+    
+    .table-head
+    {
+        color: rgb(52, 49, 58);
+        
+       
+    }
+    .table .tbody tr 
+    {
+       margin-bottom: 3px;
+    }
+   
+    body{
+        font-size: 14px;
+    }
+   
+    
+</style>
+
+   
+    <div class="container-fluid" id="chart-container">
+        <div class="col-md-12 p-3">
+            <h4 style="color: #000000; text-align: center;">Holidays for {{ month }} {{ year }}</h4>
+            <p style="color: #000000; text-align: center;">Total Holidays: {{ total_holidays }} | Working Days: {{ total_working_days }}</p>
+           </div>
+        <table class="table table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th class="text-center" style="color:#000">Start Date</th>
+                    <th class="text-center" style="color:#000">End Date</th>
+                    <th class="text-center" style="color:#000">Holiday Name</th>
+                  
+                </tr>
+            </thead>
+            <tbody>
+                {% for holiday in holiday_data %}
+                <tr>
+                  <td class="text-center" style="color:#000">{{ holiday.start_date }}</td>
+                  <td class="text-center" style="color:#000">{{ holiday.end_date }}</td>
+                  <td class="text-center" style="color:#000">{{ holiday.name }}</td>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+
+    </div>
+
+    
+<body>
+
+
+                      
+    
+    
+</body>
+
+</html>

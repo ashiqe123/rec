@@ -1,0 +1,780 @@
+{% extends 'app1/base.html' %}
+{% load static %}
+{% block body %}
+
+<div class="card radius-15 m-3">
+    <div class="row p-3">
+       
+            <div class="col-md-12">
+               <center>
+               <h2> New loan Acount</h2>
+            </center>
+            </div>
+            
+            
+            <hr style="width:95%">
+        
+    </div>
+</div>
+<div class="page-content">
+    <div class="card radius-15 p-5 ">
+
+
+
+<form id="bankForm" method="post" action="{% url 'create_loan_account' %}">
+    {% csrf_token %}
+    <div class="row p">
+        <div class="col-md-5 p-2">ACCOUNT NAME</div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2">LENDER BANK</div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-5 d-flex p-2"><select name="acc_name" id="acc_name" class="form-control text-white">
+          <option value="cash">Select Name</option>
+          {% for i in accounts %}
+            <option data-acc-number="{{ i.account_number }}" value="{{ i.holder_name }}">{{ i.holder_name }}</option>
+          {% endfor %}
+        </select>
+        <a class="btn btn-outline-secondary ml-1" href="#"  id="open-modal"
+        >+</a>
+      </div>
+        
+         
+        
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"> <input class="form-control" type="text" name="lender" value=""> </div>
+    </div>
+    
+
+
+
+    <div class="row">
+        <div class="col-md-5 p-2">ACCOUNT NUMBER</div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2">DESCRIPTION</div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-5 p-2"><input class="form-control" type="text" name="acc_number" id="acc_number" value=""></div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"><input class="form-control" type="text" name="desc" value=""></div>
+    </div>
+    <script>
+      document.querySelector("#acc_name").addEventListener("change", function() {
+  document.querySelector("#acc_number").value = this.selectedOptions[0].dataset.accNumber;
+});
+
+    </script>
+    <div class="row">
+        <div class="col-md-5 p-2">CURRENT BALANCE</div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2">LOAN DATE</div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-5 p-2"><input class="form-control" type="text" name="balance" value=""></div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"><input class="form-control" type="date" name="date" value=""></div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-5 p-2">LOAN RECIEVED in</div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2">INTREST RATE %</div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-5 p-2"><select   name="recieved" class="form-control  text-white" id="">
+            <option class="form-control bg-dark text-white" value="cash">CASH</option>
+            {% for i in bank %}
+            <option class="form-control bg-dark text-white" value="{{i.bankname}}">{{i.bankname}}</option>
+            {% endfor %}
+        </select>  </div>  <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"><input class="form-control" type="text" placeholder="%" name="intrest" value="%"></div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-5 p-2">TERM</div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2">PROCESSING FEE</div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-5 p-2"> <input type="text" name="term" class="form-control" ></div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"><input class="form-control" type="text" name="processing" value=""></div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-5 p-2">PROCESSING PAID FROM</div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5"></div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-5 p-2"> <select    name="paid" class="form-control  text-white" id="">
+            <option class="form-control bg-dark text-white" value="cash">CASH</option>
+            {% for i in bank %}
+            <option class="form-control bg-dark text-white" value="{{i.bankname}}">{{i.bankname}}</option>
+            {% endfor %}
+        </select>      </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5"></div>
+    </div>
+    
+
+    
+    <div class="row mb-5">
+        <div class="col-md-9 mt-3"></div>
+        <div class="col-md-2 mt-3">
+          <button type="submit" class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
+            Save Loan Account
+          </button>
+        </div>
+        <div class="col-md-1"></div>
+      </div>
+</form>
+</div>
+</div>
+<!-- Modal -->
+
+
+<div class="modal fade" id="accountModal" tabindex="-1" role="dialog" aria-labelledby="accountModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content" style="background-color: #213b52;">
+      <div class="modal-header">
+        <h5 class="modal-title" id="accountModalLabel">Account Details</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="accountForm" action="" method="post">
+          {% csrf_token %}
+          <input type="hidden" id="isActive" value="true">
+          <div style="width: 45%;float: left;">
+          <h3>Bank Account Holder Form</h3>
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+          </div>
+          
+          <div class="form-group">
+            <label for="alias">Alias</label>
+            <input type="text" class="form-control" id="alias" name="alias" placeholder="Alias">
+          </div>
+          
+          <div class="form-group">
+            <label for="phone_number">Phone Number</label>
+            <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="Phone Number">
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+          </div>
+          
+          <div class="form-group">
+            <label for="account_type">Account Type</label>
+            <select class="form-control" id="account_type" name="account_type">
+              <option value="">Select Account Type</option>
+              <option value="Savings">Bank Account</option>
+              <option value="Current">Credit card</option>
+            </select>
+          </div>
+          <h3>Bank Configuration Form</h3>
+          <div class="form-group">
+            <label for="accountName">Set cheque book range</label>
+            <select class="form-control" name="set_cheque_book_range" id="set_cheque_book_range">
+              
+              <option value="Savings">Yes</option>
+              <option value="Current">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="accountName">Enable cheque printing</label>
+            <select class="form-control" id="enable_cheque_printing" name="enable_cheque_printing">
+              
+              <option value="Savings">Yes</option>
+              <option value="Current">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="accountName">Set cheque printing configuration</label>
+            <select class="form-control" id="set_cheque_printing_configuration" name="set_cheque_printing_configuration">
+              
+              <option value="Savings">Yes</option>
+              <option value="Current">No</option>
+            </select>
+          </div>
+          <h3>Tax Registration Form</h3>
+
+<div class="form-group">
+  <label for="pan_it_number">Pan It Number</label>
+  <input type="text" class="form-control" id="pan_it_number" placeholder="Pan It Number" name="pan_it_number">
+</div>
+
+<div class="form-group">
+  <label for="registration_type">Registration Type</label>
+  <select class="form-control" id="registration_type" name="registration_type">
+    <option value="">Select Registration Type</option>
+    <option value="Regular">Regular</option>
+    <option value="Composition">Composition</option>
+    <option value="Consumer">Consumer</option>
+    <option value="Unregistered">Unregistered</option>
+    <option value="Unknown">Unknown</option>
+  </select>
+</div>
+
+<div class="form-group">
+  <label for="gstin_un">Gstin Un</label>
+  <input type="text" class="form-control" id="gstin_un" placeholder="Gstin Un" name="gstin_un">
+</div>
+
+<div class="form-group">
+  <label for="set_alter_gst_details">Set Alter Gst Details</label>
+  <select class="form-control" id="set_alter_gst_details" name="set_alter_gst_details">
+    
+
+    
+<option
+
+value="Yes">Yes</option>
+
+    
+<option
+
+value="No">No</option>
+
+  
+</select>
+
+
+</div>
+<div class="form-group">
+<input type="checkbox" id="agree_terms_conditions" required>
+<label for="agree_terms_conditions">Agree to terms and conditions</label>
+</div>
+        </div>
+        
+        <div style="width: 45%;float: right;" class="ml-5">
+          <h3>Bank Account Form</h3>
+          <div class="form-group">
+            <label for="accountName">Account Name</label>
+            <input type="text" class="form-control" id="account_name" placeholder="Account Name" name="account_name">
+          </div>
+
+          <div class="form-group">
+            <label for="accountNumber">Account Number</label>
+            <input type="text" class="form-control" id="account_number" placeholder="Account Number" name="account_number">
+          </div>
+
+          <div class="form-group">
+            <label for="ifscCode">IFSC Code</label>
+            <input type="text" class="form-control" id="ifsc_code" placeholder="IFSC Code" name="ifsc_code">
+          </div>
+
+          <div class="form-group">
+            <label for="swiftCode">SWIFT Code</label>
+            <input type="text" class="form-control" id="swift_code" placeholder="SWIFT Code" name="swift_code">
+          </div>
+
+          <div class="form-group">
+            <label for="bankName">Bank Name</label>
+            <select class="form-control" id="bank_name" name="bank_name">
+              <option value="">Select Bank</option>
+              <option value="SBI">State Bank of India</option>
+              <option value="BOB">Bank of Baroda</option>
+              <option value="BOI">Bank of India</option>
+              <option value="BOM">Bank of Maharashtra</option>
+              <option value="CAN">Canara Bank</option>
+              <option value="CBI">Central Bank of India</option>
+              <option value="IND">Indian Bank</option>
+              <option value="IOB">Indian Overseas Bank</option>
+              <option value="PSB">Punjab & Sind Bank</option>
+              <option value="PNB">Punjab National Bank</option>
+              <option value="UCO">UCO Bank</option>
+              <option value="UBI">Union Bank of India</option>
+              <option value="AXIS">Axis Bank Ltd.</option>
+              <option value="BANDHAN">Bandhan Bank Ltd.</option>
+              <option value="CSB">CSB Bank Limited</option>
+              <option value="CUB">City Union Bank Ltd.</option>
+              <option value="DCB">DCB Bank Ltd.</option>
+              <option value="DHANLAXMI">Dhanlaxmi Bank Ltd.</option>
+              <option value="FEDERAL">Federal Bank Ltd.</option>
+              <option value="HDFC">HDFC Bank Ltd.</option>
+              <option value="ICICI">ICICI Bank Ltd.</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+              <label for="branchName">Branch Name</label>
+              <input type="text" class="form-control" id="branch_name" placeholder="Branch Name" name="branch_name">
+            </div>
+            <h3>Mailing Address Form</h3>
+            <div class="form-group">
+              <label for="mailingName">Mailing Name</label>
+              <input type="text" class="form-control" id="mailing_name" placeholder="Mailing Name" name="mailing_name">
+            </div>
+            
+            <div class="form-group">
+              <label for="address">Mailing Address</label>
+              <textarea class="form-control" id="address" rows="3" name="address"></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="mailingCountry">Mailing Country</label>
+              <select class="form-control" id="country" name="country">
+                <option>Select Country</option>
+  <option value="AF">Afghanistan</option>
+  <option value="AX">Aland Islands</option>
+  <option value="AL">Albania</option>
+  <option value="DZ">Algeria</option>
+  <option value="AS">American Samoa</option>
+  <option value="AD">Andorra</option>
+  <option value="AO">Angola</option>
+  <option value="AI">Anguilla</option>
+  <option value="AQ">Antarctica</option>
+  <option value="AG">Antigua and Barbuda</option>
+  <option value="AR">Argentina</option>
+  <option value="AM">Armenia</option>
+  <option value="AW">Aruba</option>
+  <option value="AU">Australia</option>
+  <option value="AT">Austria</option>
+  <option value="AZ">Azerbaijan</option>
+  <option value="BS">Bahamas</option>
+  <option value="BH">Bahrain</option>
+  <option value="BD">Bangladesh</option>
+  <option value="BB">Barbados</option>
+  <option value="BY">Belarus</option>
+  <option value="BE">Belgium</option>
+  <option value="BZ">Belize</option>
+  <option value="BJ">Benin</option>
+  <option value="BM">Bermuda</option>
+  <option value="BT">Bhutan</option>
+  <option value="BO">Bolivia</option>
+  <option value="BQ">Bonaire, Sint Eustatius and Saba</option>
+  <option value="BA">Bosnia and Herzegovina</option>
+  <option value="BW">Botswana</option>
+  <option value="BV">Bouvet Island</option>
+  <option value="BR">Brazil</option>
+  <option value="IO">British Indian Ocean Territory</option>
+  <option value="BN">Brunei Darussalam</option>
+  <option value="BG">Bulgaria</option>
+  <option value="BF">Burkina Faso</option>
+  <option value="BI">Burundi</option>
+  <option value="KH">Cambodia</option>
+  <option value="CM">Cameroon</option>
+  <option value="CA">Canada</option>
+  <option value="CV">Cape Verde</option>
+  <option value="KY">Cayman Islands</option>
+  <option value="CF">Central African Republic</option>
+  <option value="TD">Chad</option>
+  <option value="CL">Chile</option>
+  <option value="CN">China</option>
+  <option value="CX">Christmas Island</option>
+  <option value="CC">Cocos (Keeling) Islands</option>
+  <option value="CO">Colombia</option>
+  <option value="KM">Comoros</option>
+  <option value="CG">Congo</option>
+  <option value="CD">Congo, Democratic Republic of the Congo</option>
+  <option value="CK">Cook Islands</option>
+  <option value="CR">Costa Rica</option>
+  <option value="CI">Cote D'Ivoire</option>
+  <option value="HR">Croatia</option>
+  <option value="CU">Cuba</option>
+  <option value="CW">Curacao</option>
+  <option value="CY">Cyprus</option>
+  <option value="CZ">Czech Republic</option>
+  <option value="DK">Denmark</option>
+  <option value="DJ">Djibouti</option>
+  <option value="DM">Dominica</option>
+  <option value="DO">Dominican Republic</option>
+  <option value="EC">Ecuador</option>
+  <option value="EG">Egypt</option>
+  <option value="SV">El Salvador</option>
+  <option value="GQ">Equatorial Guinea</option>
+  <option value="ER">Eritrea</option>
+  <option value="EE">Estonia</option>
+  <option value="ET">Ethiopia</option>
+  <option value="FK">Falkland Islands (Malvinas)</option>
+  <option value="FO">Faroe Islands</option>
+  <option value="FJ">Fiji</option>
+  <option value="FI">Finland</option>
+  <option value="FR">France</option>
+  <option value="GF">French Guiana</option>
+  <option value="PF">French Polynesia</option>
+  <option value="TF">French Southern Territories</option>
+  <option value="GA">Gabon</option>
+  <option value="GM">Gambia</option>
+  <option value="GE">Georgia</option>
+  <option value="DE">Germany</option>
+  <option value="GH">Ghana</option>
+  <option value="GI">Gibraltar</option>
+  <option value="GR">Greece</option>
+  <option value="GL">Greenland</option>
+  <option value="GD">Grenada</option>
+  <option value="GP">Guadeloupe</option>
+  <option value="GU">Guam</option>
+  <option value="GT">Guatemala</option>
+  <option value="GG">Guernsey</option>
+  <option value="GN">Guinea</option>
+  <option value="GW">Guinea-Bissau</option>
+  <option value="GY">Guyana</option>
+  <option value="HT">Haiti</option>
+  <option value="HM">Heard Island and Mcdonald Islands</option>
+  <option value="VA">Holy See (Vatican City State)</option>
+  <option value="HN">Honduras</option>
+  <option value="HK">Hong Kong</option>
+  <option value="HU">Hungary</option>
+  <option value="IS">Iceland</option>
+  <option value="IN">India</option>
+  <option value="ID">Indonesia</option>
+  <option value="IR">Iran, Islamic Republic of</option>
+  <option value="IQ">Iraq</option>
+  <option value="IE">Ireland</option>
+  <option value="IM">Isle of Man</option>
+  <option value="IL">Israel</option>
+  <option value="IT">Italy</option>
+  <option value="JM">Jamaica</option>
+  <option value="JP">Japan</option>
+  <option value="JE">Jersey</option>
+  <option value="JO">Jordan</option>
+  <option value="KZ">Kazakhstan</option>
+  <option value="KE">Kenya</option>
+  <option value="KI">Kiribati</option>
+  <option value="KP">Korea, Democratic People's Republic of</option>
+  <option value="KR">Korea, Republic of</option>
+  <option value="XK">Kosovo</option>
+  <option value="KW">Kuwait</option>
+  <option value="KG">Kyrgyzstan</option>
+  <option value="LA">Lao People's Democratic Republic</option>
+  <option value="LV">Latvia</option>
+  <option value="LB">Lebanon</option>
+  <option value="LS">Lesotho</option>
+  <option value="LR">Liberia</option>
+  <option value="LY">Libyan Arab Jamahiriya</option>
+  <option value="LI">Liechtenstein</option>
+  <option value="LT">Lithuania</option>
+  <option value="LU">Luxembourg</option>
+  <option value="MO">Macao</option>
+  <option value="MK">Macedonia, the Former Yugoslav Republic of</option>
+  <option value="MG">Madagascar</option>
+  <option value="MW">Malawi</option>
+  <option value="MY">Malaysia</option>
+  <option value="MV">Maldives</option>
+  <option value="ML">Mali</option>
+  <option value="MT">Malta</option>
+  <option value="MH">Marshall Islands</option>
+  <option value="MQ">Martinique</option>
+  <option value="MR">Mauritania</option>
+  <option value="MU">Mauritius</option>
+  <option value="YT">Mayotte</option>
+  <option value="MX">Mexico</option>
+  <option value="FM">Micronesia, Federated States of</option>
+  <option value="MD">Moldova, Republic of</option>
+  <option value="MC">Monaco</option>
+  <option value="MN">Mongolia</option>
+  <option value="ME">Montenegro</option>
+  <option value="MS">Montserrat</option>
+  <option value="MA">Morocco</option>
+  <option value="MZ">Mozambique</option>
+  <option value="MM">Myanmar</option>
+  <option value="NA">Namibia</option>
+  <option value="NR">Nauru</option>
+  <option value="NP">Nepal</option>
+  <option value="NL">Netherlands</option>
+  <option value="AN">Netherlands Antilles</option>
+  <option value="NC">New Caledonia</option>
+  <option value="NZ">New Zealand</option>
+  <option value="NI">Nicaragua</option>
+  <option value="NE">Niger</option>
+  <option value="NG">Nigeria</option>
+  <option value="NU">Niue</option>
+  <option value="NF">Norfolk Island</option>
+  <option value="MP">Northern Mariana Islands</option>
+  <option value="NO">Norway</option>
+  <option value="OM">Oman</option>
+  <option value="PK">Pakistan</option>
+  <option value="PW">Palau</option>
+  <option value="PS">Palestinian Territory, Occupied</option>
+  <option value="PA">Panama</option>
+  <option value="PG">Papua New Guinea</option>
+  <option value="PY">Paraguay</option>
+  <option value="PE">Peru</option>
+  <option value="PH">Philippines</option>
+  <option value="PN">Pitcairn</option>
+  <option value="PL">Poland</option>
+  <option value="PT">Portugal</option>
+  <option value="PR">Puerto Rico</option>
+  <option value="QA">Qatar</option>
+  <option value="RE">Reunion</option>
+  <option value="RO">Romania</option>
+  <option value="RU">Russian Federation</option>
+  <option value="RW">Rwanda</option>
+  <option value="BL">Saint Barthelemy</option>
+  <option value="SH">Saint Helena</option>
+  <option value="KN">Saint Kitts and Nevis</option>
+  <option value="LC">Saint Lucia</option>
+  <option value="MF">Saint Martin</option>
+  <option value="PM">Saint Pierre and Miquelon</option>
+  <option value="VC">Saint Vincent and the Grenadines</option>
+  <option value="WS">Samoa</option>
+  <option value="SM">San Marino</option>
+  <option value="ST">Sao Tome and Principe</option>
+  <option value="SA">Saudi Arabia</option>
+  <option value="SN">Senegal</option>
+  <option value="RS">Serbia</option>
+  <option value="CS">Serbia and Montenegro</option>
+  <option value="SC">Seychelles</option>
+  <option value="SL">Sierra Leone</option>
+  <option value="SG">Singapore</option>
+  <option value="SX">Sint Maarten</option>
+  <option value="SK">Slovakia</option>
+  <option value="SI">Slovenia</option>
+  <option value="SB">Solomon Islands</option>
+  <option value="SO">Somalia</option>
+  <option value="ZA">South Africa</option>
+  <option value="GS">South Georgia and the South Sandwich Islands</option>
+  <option value="SS">South Sudan</option>
+  <option value="ES">Spain</option>
+  <option value="LK">Sri Lanka</option>
+  <option value="SD">Sudan</option>
+  <option value="SR">Suriname</option>
+  <option value="SJ">Svalbard and Jan Mayen</option>
+  <option value="SZ">Swaziland</option>
+  <option value="SE">Sweden</option>
+  <option value="CH">Switzerland</option>
+  <option value="SY">Syrian Arab Republic</option>
+  <option value="TW">Taiwan, Province of China</option>
+  <option value="TJ">Tajikistan</option>
+  <option value="TZ">Tanzania, United Republic of</option>
+  <option value="TH">Thailand</option>
+  <option value="TL">Timor-Leste</option>
+  <option value="TG">Togo</option>
+  <option value="TK">Tokelau</option>
+  <option value="TO">Tonga</option>
+  <option value="TT">Trinidad and Tobago</option>
+  <option value="TN">Tunisia</option>
+  <option value="TR">Turkey</option>
+  <option value="TM">Turkmenistan</option>
+  <option value="TC">Turks and Caicos Islands</option>
+  <option value="TV">Tuvalu</option>
+  <option value="UG">Uganda</option>
+  <option value="UA">Ukraine</option>
+  <option value="AE">United Arab Emirates</option>
+  <option value="GB">United Kingdom</option>
+  <option value="US">United States</option>
+  <option value="UM">United States Minor Outlying Islands</option>
+  <option value="UY">Uruguay</option>
+  <option value="UZ">Uzbekistan</option>
+  <option value="VU">Vanuatu</option>
+  <option value="VE">Venezuela</option>
+  <option value="VN">Viet Nam</option>
+  <option value="VG">Virgin Islands, British</option>
+  <option value="VI">Virgin Islands, U.s.</option>
+  <option value="WF">Wallis and Futuna</option>
+  <option value="EH">Western Sahara</option>
+  <option value="YE">Yemen</option>
+  <option value="ZM">Zambia</option>
+  <option value="ZW">Zimbabwe</option>
+                
+              </select>
+            
+            </div>
+            
+            
+            <div
+             
+            class="form-group">
+            
+              
+            <label
+             
+            for="mailingState">Mailing State</label>
+            
+              
+            <select
+             
+            class="form-control" id="state" name="state">
+                <option value="">Select State</option>
+            
+                <option value=”Andaman and Nicobar Islands”>Andaman and Nicobar Islands</option>
+<option value=”Andhra Pradesh”>Andhra Pradesh</option>
+<option value=”Arunachal Pradesh”>Arunachal Pradesh</option>
+<option value=”Assam”>Assam</option>
+<option value=”Bihar”>Bihar</option>
+<option value=”Chandigarh”>Chandigarh</option>
+<option value=”Chhattisgarh”>Chhattisgarh</option>
+<option value=”Dadra and Nagar Haveli”>Dadra and Nagar Haveli</option>
+<option value=”Daman and Diu”>Daman and Diu</option>
+<option value=”Delhi”>Delhi</option>
+<option value=”Goa”>Goa</option>
+<option value=”Gujarat”>Gujarat</option>
+<option value=”Haryana”>Haryana</option>
+<option value=”Himachal Pradesh”>Himachal Pradesh</option>
+<option value=”Jammu and Kashmir”>Jammu and Kashmir</option>
+<option value=”Jharkhand”>Jharkhand</option>
+<option value=”Karnataka”>Karnataka</option>
+<option value=”Kerala”>Kerala</option>
+<option value=”Lakshadweep”>Lakshadweep</option>
+<option value=”Madhya Pradesh”>Madhya Pradesh</option>
+<option value=”Maharashtra”>Maharashtra</option>
+<option value=”Manipur”>Manipur</option>
+<option value=”Meghalaya”>Meghalaya</option>
+<option value=”Mizoram”>Mizoram</option>
+<option value=”Nagaland”>Nagaland</option>
+<option value=”Orissa”>Orissa</option>
+<option value=”Pondicherry”>Pondicherry</option>
+<option value=”Punjab”>Punjab</option>
+<option value=”Rajasthan”>Rajasthan</option>
+<option value=”Sikkim”>Sikkim</option>
+<option value=”Tamil Nadu”>Tamil Nadu</option>
+<option value=”Tripura”>Tripura</option>
+<option value=”Uttaranchal”>Uttaranchal</option>
+<option value=”Uttar Pradesh”>Uttar Pradesh</option>
+<option value=”West Bengal”>West Bengal</option>
+              </select>
+            
+            </div>
+            
+            
+            <div
+             
+            class="form-group">
+            
+              
+            <label
+             
+            for="mailingPin">Mailing Pin</label>
+            
+              
+            <input
+             
+            type="text"
+             
+            class="form-control"
+             
+            id="pin" placeholder="Mailing Pin" name="pin">
+            </div>
+            <h3>Opening Balance Form</h3>
+            <div class="form-group">
+              <label for="date">Date</label>
+              <input type="date" class="form-control" id="date" placeholder="Opening Balance Date" name="date">
+            </div>
+            
+            <div class="form-group">
+              <label for="amount">Amount</label>
+              <input type="number" class="form-control" id="amount" placeholder="Opening Balance Amount" name="amount">
+            </div>
+          </div>
+        
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-info rounded-pill" id="saveAccountBtn">Save</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+  $('#open-modal').click(function() {
+    $('#accountModal').modal('show');
+  })
+})
+  $(document).on("click", "#saveAccountBtn", function () {
+    var account_name = $("#account_name").val();
+    var account_number = $("#account_number").val();
+    var ifsc_code = $("#ifsc_code").val();
+    var swift_code = $("#swift_code").val();
+    var bank_name = $("#bank_name").val();
+    var branch_name = $("#branch_name").val();
+    var name = $("#name").val();
+    var alias = $("#alias").val();
+    var phone_number = $("#phone_number").val();
+    var email = $("#email").val();
+    var account_type = $("#account_type").val();
+    var mailing_name = $("#mailing_name").val();
+    var address = $("#address").val();
+    var country = $("#country").val();
+    var state = $("#state").val();
+    var pin = $("#pin").val();
+    var date = $("#date").val();
+    var amount = $("#amount").val();
+    var pan_it_number = $("#pan_it_number").val();
+    var registration_type = $("#registration_type").val();
+    var gstin_un = $("#gstin_un").val();
+    var set_alter_gst_details = $("#set_alter_gst_details").val();
+    var set_cheque_book_range = $("#set_cheque_book_range").val();
+    var enable_cheque_printing = $("#enable_cheque_printing").val();
+    var set_cheque_printing_configuration = $("#set_cheque_printing_configuration").val();
+    
+
+    $.ajax({
+        type: "POST",
+        url: "{% url 'save_account' %}",
+        data: {
+            account_name: account_name,
+            account_number: account_number,
+            ifsc_code: ifsc_code,
+            swift_code: swift_code,
+            bank_name: bank_name,
+            branch_name: branch_name,
+            name: name,
+            alias: alias,
+            phone_number: phone_number,
+            email: email,
+            account_type: account_type,
+            mailing_name: mailing_name,
+            address: address,
+            country: country,
+            state: state,
+            pin: pin,
+            date: date,
+            amount: amount,
+            pan_it_number: pan_it_number,
+            registration_type: registration_type,
+            gstin_un: gstin_un,
+            set_alter_gst_details: set_alter_gst_details,
+            set_cheque_book_range: set_cheque_book_range,
+            enable_cheque_printing: enable_cheque_printing,
+            set_cheque_printing_configuration: set_cheque_printing_configuration,
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+        },
+        success: function (response) {
+            document.getElementById("modalAccount").reset();
+            reloadAccountDropdown(); // Call the reloadAccountDropdown function to update the account name dropdown
+        },
+    });
+});
+
+function reloadAccountDropdown() {
+    $.ajax({
+        url: "{% url 'account_dropdown' %}",
+        type: "GET",
+        dataType: "json",
+        data: {}, // You can pass additional data if needed
+        success: function (data) {
+            var dropdown = $("#acc_name");
+            dropdown.empty();
+            $.each(data, function (key, value) {
+                var optionText = value[1];
+                var optionValue = key;
+
+                // Append the option to the dropdown
+                dropdown.append($("<option></option>").attr("value", optionValue).text(optionText));
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error(xhr.responseText);
+        },
+    });
+}
+
+
+
+</script>
+{% endblock %}

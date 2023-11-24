@@ -1,0 +1,129 @@
+{% extends 'app1/base.html' %}
+{% block body %}
+{% load static %}
+{% if user.is_authenticated %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+<style>
+    .bar {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .bar .left {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .bar .left input {
+        padding-left: 4vw;
+        height: 5vh;
+    }
+</style>
+
+
+<div class="page-content">
+    <div class="card radius-15">
+        <div class="card-title" id="div2">
+            <center>
+                <h6 style="padding-top: 20px;">{{cmp1.cname}}</h6>
+                <h2 class="my-4 text-uppercase" id="headline">SALES BY items</h2>
+                <div class="display">
+                    <div id="d1" style="display: inline-block;"></div>
+                    <div id="d2" style="display: inline-block;"></div>
+                </div>
+            </center>
+            <hr>
+        </div>
+        <div class="card-body">
+            <div class="bar">
+                <div class="right"></div>
+                <div class="right">
+                    <a class="btn btn-outline-info" href="{% url 'sales_by_item'%}">BACK</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card radius-15">
+
+        <div class="card-body">
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var grandTotalsByMonthString = localStorage.getItem('grandtotalBymonth');
+    var itemName = localStorage.getItem('itemName');
+    var head = document.getElementById('headline');
+    var startDateValue = localStorage.getItem("startDateValue") || "";
+    var endDateValue = localStorage.getItem("endDateValue") || "";
+    var startDate = moment(startDateValue);
+    var endDate = moment(endDateValue);
+
+    if (moment(startDateValue).isValid() && moment(endDateValue).isValid()) {
+        document.getElementById("d1").textContent = "Start Date: " + startDate.format("YYYY-MM-DD");
+        document.getElementById("d2").textContent = "End Date: " + endDate.format("YYYY-MM-DD");
+    }
+
+
+
+    if (itemName === 'All' || itemName === null) {
+        head.textContent = "sales by items";
+    } else {
+        head.textContent = "sales by " + itemName;
+
+    }
+    if (grandTotalsByMonthString) {
+        // Parse the string back into a JavaScript object
+        var grandTotalsByMonth = JSON.parse(grandTotalsByMonthString);
+        console.log(grandTotalsByMonth);
+    }
+    var salesData = Object.values(grandTotalsByMonth);
+
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Sales by Month',
+                data: salesData,
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    color: 'white'
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        // This more specific font property overrides the global property
+                        font: {
+                            color: 'white'
+                        }
+                    }
+                }
+            }
+        }
+
+    });
+
+</script>
+
+
+{% endif %}
+
+{% endblock %}

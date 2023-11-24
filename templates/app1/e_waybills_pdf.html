@@ -1,0 +1,296 @@
+<!-- shemeem-----e-waybill-pdf template -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fin sYs</title>
+
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  </head>
+  <style>
+    .table2 {
+      text-align: center;
+      padding-top: 6px;
+      font-size: 1.1em;
+      background-color: azure;
+    }
+
+    .table-head {
+      color: rgb(52, 49, 58);
+    }
+    .table2 .tbody tr {
+      margin-bottom: 3px;
+    }
+    .table3 {
+      width: 75px;
+      text-align: right;
+      font-size: 14px;
+    }
+    body {
+      font-size: 14px;
+    }
+  </style>
+
+  <body>
+    <div class="my-5 page" size="A4">
+      <div class="p-5">
+        <div
+          id="ember2512"
+          class="row tooltip-container ember-view ribbon text-ellipsis"
+          style="display: flex; justify-content: space-between;"
+        >
+          <div
+            class="col-md-4 ribbon-inner ribbon-open"
+            style="
+              background-color: #268ddd;
+              margin-right: 600px;
+              color: white;
+              text-align: center;
+              padding-top: 10px;
+            "
+          >
+            {{ewbill.status}}<!---->
+          </div>
+          <div class="col-md-4">
+            <h3>
+              <center class="text-black"><b>E-WAY BILL</b></center>
+            </h3>
+        </div>
+          <div
+              class="col-md-4 graphic-path"
+              style="
+                text-align: right;
+                padding-top: 10px;
+                background-color: #22b8d1;
+                margin-left: 550px;
+                text-align: center;
+                color: rgb(0, 0, 0);
+              "
+            >
+            <p>Bill No. <span style="font-weight: bold;">{{ewbill.invoice_no }}</span></p>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-12 d-flex justify-content-start">
+                <h5 class="text-info" style="font-weight: bold;">{{cmp1.cname }}</h5>
+                <p class="address" style="font-weight: bold;color: #000;"> {{cmp1.caddress}}<br>
+                    {{cmp1.city}},
+                    {{cmp1.state}}<br>
+                    {{cmp1.pincode}}<br>
+                    {{cmp1.cemail}}<br>
+                    {{cmp1.phone}}<br>
+                </p> 
+            </div>
+        </div>
+        <!-- <section class="top-content bb d-flex justify-content-between">
+          <div class="logo">
+          </div>
+          <div class="top-left">
+            <div
+              class="graphic-path"
+              style="
+                text-align: right;
+                padding-top: 10px;
+                background-color: #22b8d1;
+                margin-left: 550px;
+                text-align: center;
+                color: rgb(0, 0, 0);
+              "
+            >
+            <p>Bill No. <span style="font-weight: bold;">{{ewbill.invoice_no }}</span></p>
+            </div>
+           
+          </div>
+        </section> -->
+        <hr />
+        <table class="table1">
+          <tbody>
+            <tr style="font-weight: bolder">
+              <td>Bill To</td>
+              <td></td>
+              <td>Deliver To</td>
+            </tr>
+            <tr>
+              <td>
+                <h5 class="text-info" style="font-weight: bold;">{{ewbill.customer_name}}</h5>
+                <p class="address" style="font-weight: bold;color: #000;">
+                    {{ewbill.customer_email}}
+                    <br>
+                    {{ewbill.cust.street}}
+                    <br>
+                    {{ewbill.cust.city}}
+                    <br>
+                    {{ewbill.cust.state}} - {{ewbill.cust.pincode}}
+                    <br>
+                    <span>Mob: </span><b>{{ewbill.cust.mobile}}</b>
+                </p> 
+              </td>
+              <td></td>
+              <td>
+                <h5 class="text-info" style="font-weight: bold;">{{ewbill.customer_name}}</h5>
+                <p class="address" style="font-weight: bold;color: #000;">{{ ewbill.delivery_address|linebreaksbr }} </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <hr />
+        <!-- <section class="store-user mt-5">
+          <table class="table1" style="margin: 25px">
+            <th>
+              <p>Deliver To Details:</p>
+              <p>
+                {{ewbill.customer_name}}<br />
+                {{customer_email}}<br />
+                {% if customer_gstin %} GSTIN:{{ customer_gstin }} {% endif %}
+              </p>
+            </th>
+            <th></th>
+            <th>
+              Start Date: {{ewbill.start_date | date:'d-m-Y'}}<br />
+
+              End Date : {{ewbill.end_date}}
+            </th>
+          </table>
+        </section> -->
+
+        <section class="product-area mt-4">
+          <table class="table2 table-hover">
+            <thead>
+              <tr>
+                <td>ITEMS</td>
+                <td>HSN NUMBER</td>
+                <td>QUANTITY</td>
+                <td>PRICE</td>
+                <td>TAX</td>
+                <td>DISCOUNT</td>
+                <td>TOTAL</td>
+              </tr>
+            </thead>
+            <tbody>
+              {% for itm in ewitem %}
+              <tr>
+                <td class="text-center" style="color: #000">
+                  {{ itm.item }}
+                </td>
+                <td class="text-center" style="color: #000">{{ itm.hsn }}</td>
+                <td class="text-center" style="color: #000">{{ itm.qty }}</td>
+                <td class="text-center" style="color: #000">
+                  {{ itm.price }}
+                </td>
+                <td class="text-center" style="color: #000">{{ itm.tax }}</td>
+                <td class="text-center" style="color: #000">
+                  {{ itm.discount }}
+                </td>
+                <td class="text-center" style="color: #000">
+                  {{ itm.total }}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </section>
+
+        <section class="balance-info">
+          <div class="row my-5">
+            <div class="col-md-8">
+              <h4 class="m-0 font-weight-bold h4" style="color: black">
+                Note : &nbsp;
+              </h4><span style="font-weight: normal;">{{ewbill.note}}</span>
+            </div>
+            <div class="col-md-4">
+              <table class="table3 border-0 table-hover">
+                <tr>
+                  <th colspan="5">
+                    <span style="float: right; margin-right: 14px"
+                      >Sub Total :</span
+                    >
+                  </th>
+                  <td style="color: black; font-weight: bold;">
+                    {{ewbill.sub_total}}
+                  </td>
+                </tr>
+
+                {% if ewbill.igst != 0 %}
+                <tr id="igstrow">
+                  <th colspan="5">
+                    <span style="float: right; margin-right: 14px">IGST:</span>
+                  </th>
+
+                  <td style="font-weight: bold" id="igst">{{ewbill.igst}}</td>
+                </tr>
+                {% endif %} {% if ewbill.cgst != 0 %}
+                <tr id="cgstrow">
+                  <th colspan="5">
+                    <span style="float: right; margin-right: 14px">CGST:</span>
+                  </th>
+
+                  <td style="font-weight: bold" id="cgst">{{ewbill.cgst}}</td>
+                </tr>
+                {% endif %} {% if ewbill.sgst != 0 %}
+                <tr id="sgstrow">
+                  <th colspan="5">
+                    <span style="float: right; margin-right: 14px">SGST:</span>
+                  </th>
+
+                  <td style="font-weight: bold" id="sgst">{{ewbill.sgst}}</td>
+                </tr>
+                {% endif %} {% if ewbill.shipping_charge != 0.0 %}
+                <tr id="shippingchargerow">
+                  <th colspan="5">
+                    <span style="float: right; margin-right: 14px"
+                      >Shipping_Charge:</span
+                    >
+                  </th>
+
+                  <td style="font-weight: bold" id="sgst">
+                    {{ewbill.shipping_charge}}
+                  </td>
+                </tr>
+                {% endif %} {% if ewbill.adjustment != 0.0 %}
+                <tr id="adjstrow">
+                  <th colspan="5">
+                    <span style="float: right; margin-right: 14px"
+                      >Adjustment:</span
+                    >
+                  </th>
+
+                  <td style="font-weight: bold" id="sgst">
+                    {{ewbill.adjustment}}
+                  </td>
+                </tr>
+                {% endif %}
+
+                <tfoot>
+                  <tr>
+                    <th colspan="5">
+                      <span style="float: right; margin-right: 14px"
+                        >Grand Total:</span
+                      >
+                    </th>
+                    <td style="color: black; font-weight: bold">
+                      {{ewbill.grand_total}}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </section>
+        <section>
+            <div class="row container-fluid  p-2 m-0" style="margin-top: 4rem;">
+                <div class="col-md-6 col-sm-6 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b></label><span class="text-dark">_____________________</span></div>
+                <!-- <div class="col-sm-4 m-0 p-0 text-dark">________________________</div> -->
+                <div class="col-md-6 col-sm-6 m-0 p-0"></div>
+            </div>
+        </section>
+      </div>
+    </div>
+  </body>
+</html>

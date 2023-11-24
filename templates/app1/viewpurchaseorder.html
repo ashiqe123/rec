@@ -1,0 +1,1686 @@
+{% extends 'app1/base.html' %}
+{% block body %}
+{% load social_share %}
+    {% load static %}
+    {% if user.is_authenticated %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js" ></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" type="text/css" media="print" href="{% static 'path/to/print.css' %}">
+<!-- Your regular stylesheet -->
+<link rel="stylesheet" type="text/css" href="path/to/your/normal/styles.css">
+
+<!-- Print stylesheet -->
+<link rel="stylesheet" type="text/css" media="print" href="path/to/print.css">
+
+   
+    <style>
+        /* print.css */
+@media print {
+    body * {
+        visibility: hidden;
+        font-size: 12pt;
+        
+    }
+
+    .printable, .printable * {
+        visibility: visible;
+    }
+
+    .printable-hidden {
+        display: none !important;
+    }
+
+    .printable {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+}
+
+        #div1{
+            width: 33.33%;
+            float: left;
+            height: 100px;
+            text-align: left;
+        }
+        #div2{
+            /* background-color: rgb(204, 0, 255); */
+            width: 33.33%;
+            margin: auto;
+            height: 100px;
+            text-align: left;
+        }
+        #div3{
+            /* background-color: rgb(255, 162, 0); */
+            width: 33.33%;
+            float: right;
+            margin-top: -100px;
+            height: 100px;    
+        }
+        .ribbon .ribbon-inner {
+            text-align: center;
+            color: #fff;
+            top: -20px;
+            left: -90px;
+            width: 120px;
+            padding: 3px;
+            /* position: relative;
+            transform: rotate(-45deg); */
+        }
+        .ribbon .ribbon-open {
+            background-color: #268ddd;
+            border-color: #1c72b4;
+        }
+        :root {
+            --body-bg: rgb(204, 204, 204);
+            --white: #ffffff;
+            --darkWhite: #ccc;
+            --black: #000000;
+            --dark: #615c60;
+            --themeColor: #22b8d1;
+            --pageShadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+        }
+        /* Font Include */
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap');
+        body {
+            background-color: var(--body-bg);
+        }
+        .page {
+            background: var(--white);
+            display: block;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: var(--pageShadow);
+        }
+        .page[size="A4"] {
+            width: 21cm;
+            height: 29.7cm;
+            overflow: hidden;
+        }
+        .bb {
+            border-bottom: 3px solid var(--darkWhite);
+        }
+        .top-content {
+            padding-bottom: 15px;
+        }
+        .logo img {
+            height: 60px;
+        }
+        .top-left p {
+            margin: 0;
+            color: #000000;
+        }
+        .top-left .graphic-path {
+            height: 40px;
+            position: relative;
+            margin-left: 0px;
+        }
+        .top-left .graphic-path::before {
+            content: "";
+            height: 20px;
+            background-color: var(--dark);
+            position: absolute;
+            left: 15px;
+            right: 0;
+            top: -15px;
+            z-index: 2;
+        }
+        .top-left .graphic-path::after {
+            content: "";
+            height: 22px;
+            width: 17px;
+            background: var(--black);
+            position: absolute;
+            top: -13px;
+            left: 6px;
+            transform: rotate(45deg);
+        }
+        .top-left .graphic-path p {
+            /* color: var(--white); */
+            height: 40px;
+            left: 0;
+            right: -0px;
+            text-transform: uppercase;
+            background-color: var(--themeColor);
+            font: 26px;
+            z-index: 3;
+            position: absolute;
+            padding-left: 5px;
+            /* margin-left: -50px; */
+        }
+        .store-user {
+            padding-bottom: 25px;
+        }
+        .store-user p {
+            margin: 0;
+            font-weight: 600;
+            color: #000000;
+        }
+        .store-user .address {
+            font-weight: 400;
+        }
+        .store-user h5 {
+            color: var(--themeColor);
+            font-family: 'Rajdhani', sans-serif;
+        }
+        .extra-info p span {
+            font-weight: 400;
+        
+        }
+        /* thead {
+            color: var(--white);
+            background: var(--themeColor);
+        }
+        .table td,
+        .table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+        tr th:first-child,
+        tr td:first-child {
+            text-align: left;
+        } */
+        .media img {
+            height: 60px;
+            width: 60px;
+        }
+        .media p {
+            font-weight: 400;
+            margin: 0;
+            /* color: #000000; */
+        }
+        .media p.title {
+            font-weight: 600;    
+        }
+        .balance-info .table td,
+        .balance-info .table th {
+            padding: 0;
+            border: 0;
+        }
+        .balance-info tr td:first-child {
+            font-weight: 500;
+        }
+        tfoot {
+            border-top: 2px solid var(--darkWhite);
+        }
+        tfoot td {
+            font-weight: 600;
+        }
+        .cart-bg {
+            height: 250px;
+            bottom: 32px;
+            left: -40px;
+            opacity: 0.3;
+            position: absolute;
+        }
+        footer {
+            text-align: center;
+            position: absolute;
+            bottom: 30px;
+            left: 75px;
+        }
+        footer hr {
+            margin-bottom: -22px;
+            border-top: 3px solid var(--darkWhite);
+        }
+        footer a {
+            color: var(--themeColor);
+        }
+        footer p {
+            padding: 6px;
+            border: 3px solid var(--darkWhite);
+            background-color: var(--white);
+            display: inline-block;
+            color: #000000;
+        }
+        /* table.table-bordered{
+            color: 1px solid #000;
+        } */
+        #sign{
+            border: none;
+            border-bottom: 2px solid #000;
+        }
+        hr {
+            border: 0;
+            clear:both;
+            display:block;
+            width: 100%;               
+            background-color:var(--dark);
+            height: .6px;
+        }
+        .card-registration .select-input.form-control[readonly]:not([disabled]) {
+            font-size: 1rem;
+            line-height: 2.15;
+            padding-left: .75em;
+            padding-right: .75em;
+        }
+        .card-registration .select-arrow {
+            top: 13px;
+        }
+        .bg-grey {
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 0 10px 0 10px;
+                        
+        }
+        .vl {
+            border-left: 6px solid gray;
+        }
+        .table-row{
+            cursor:pointer;
+        }
+        .spaced>li {
+            color:black;
+            font-size:10px;
+        }
+        .table1{
+            font-size:10px;
+            width:100% ;
+            color:black;
+        }
+        .label-lg {
+            padding: .3em .6em .4em;
+            font-size: 12px;
+            color:black;
+            line-height: 1.1;
+            height: 24px
+        }
+        .widget-header{
+            background-color:#444;
+            color:white;
+            font-size:20px;
+        }
+        .widget-header:after,
+        .widget-header:before {
+            content: "";
+            display: table;
+            line-height: 0
+        }
+        .widget-header:after {
+            clear: right
+        }
+        .widget-box.collapsed>.widget-header {
+            border-bottom-width: 0
+        }
+        .collapsed.fullscreen>.widget-header {
+            border-bottom-width: 1px
+        }
+        .collapsed>.widget-body {
+            display: none
+        }
+        .widget-header-flat {
+            background: #F7F7F7
+        }
+        .widget-header-large {
+            min-height: 49px;
+            padding-left: 18px
+        }
+        .widget-header-small {
+            min-height: 31px;
+            padding-left: 10px
+        }
+        .widget-header>.widget-title {
+            line-height: 36px;
+            padding: 0;
+            margin: 0;
+            display: inline;
+            font-size:13px;
+        }
+        .widget-toolbar {
+            display: inline-block;
+            padding: 0 10px;
+            line-height: 37px;
+            /* float: right; */
+            position: relative;
+        }
+        .widget-body {
+            background-color: #FFF
+        }
+        .widget-main {
+            padding: 12px
+        }
+        .ed:hover{
+            background-color: rgba(255, 255, 255,0.2);
+        }
+        .tr:hover{
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        
+        .head:hover{
+            background-color: rgba(131, 131, 131, 0.3);
+        }
+        .new{
+            color: #fff;
+        }
+        .new:hover{
+            color: rgba(255, 255, 255,0.4);
+        }
+        #runreport{
+            border: 1px solid white;
+            border-radius: 5px;
+        }
+        
+    </style>
+
+    <!-- <script>
+        async function generatePDF() {
+            var downloading = document.getElementById("whatToPrint");
+            var doc = new jsPDF('l', 'pt');
+
+            await html2canvas(downloading, {  
+            }).then((canvas) => {
+                doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 10, 700, 850);
+            })
+            doc.save("Document.pdf");
+        } 
+    </script> -->
+
+    <div class="page-content" >
+        <div class="card radius-15">
+            <div class="card-body">
+                <div class="card-title">
+                    <center><h2 class="mb-0">PURCHASE ORDER VIEW</h2></center>
+                    <hr>
+                    <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgba(0,0,0,.01);">
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                          <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse tab" id="navbarSupportedContent">
+                            <ul class="navbar-nav mr-auto">
+                                <li class="nav-item">
+                                    <a class="nav-link btn " role="button" onclick="Details()" style="color: white;"><i class="fa fa-info-circle" style="font-size: large;">&nbsp;Details</i><span class="sr-only">(current)</span></a>
+                                </li>
+                                
+                                <!-- <li class="nav-item">
+                                    <a class="nav-link btn " role="button" onclick="transaction()" style="color: white;"><i class="fa fa-stack-exchange" style="font-size: large;">&nbsp;Transactions</i></a>
+                                </li> -->
+                                <li class="nav-item">
+                                    <a class="nav-link btn " role="button" onclick="Statment()" style="color: white;"><i class="fa fa-tasks" style="font-size: large;">&nbsp;Statement</i></a>
+                                </li>
+                            </ul>
+                            <ul class="navbar-nav navbar-right">
+                                <li class="nav-item">
+                                    <form id="updateStatusForm" method="POST" data-porder-id="{{ porder.porderid }}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="status" value="Save">
+                                        {% if pordr.status == 'Draft' %}
+                                        <button type="button" class="nav-link btn btn-outline-info btn-sm mx-1 btn-status" style="color: white;">
+                                            <i class="fa fa-exchange" style="font-size: medium;">&nbsp;Convert</i>
+                                        </button>
+                                        {% endif %}
+                                    </form>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link btn btn-outline-info btn-sm" role="button" style="color: white;" data-toggle="modal" data-target="#commentModal">
+                                        <i class="fa fa-comment" style="font-size: medium;">&nbsp;Comment</i>
+                                    </a>
+                                </li>                            
+                                <li class="nav-item">
+                                    <a class="nav-link btn btn-outline-info btn-sm mx-1" role="button" style="color: white;" onclick="generatePDF()">
+                                        <i class="fa fa-file" style="font-size: medium;">&nbsp;Pdf</i>
+                                    </a>
+                                </li>
+                                <li class="nav-item active">
+                                    <a class="nav-link text-light btn btn-outline-info btn-sm" role="button" onclick="printDiv()">
+                                        <i class="fa fa-print" style="font-size: medium;"> Print</i><span class="sr-only">(current)</span>
+                                    </a>
+                                </li>
+                                
+                               
+                                <!-- <li class="nav-item">
+                                    <a class="nav-link text-light btn btn-outline-info btn-sm " role="button" href="{% url 'render_pdfpurchase_view' pordr.porderid%}">
+                                        <i class="fa fa-file-pdf-o" style="font-size: medium;"> Pdf</i>
+                                    </a>
+                                </li> -->
+                                
+                                <li class="nav-item">
+                                    <a class="nav-link text-light btn btn-outline-info btn-sm mx-1" role="button" href="goeditpurchaseorder/{{ pordr.porderid }}{{ pitem.porder }}"><i class=" fa fa-pencil" style="font-size: medium;"> Edit</i></a>
+                                </li>
+                                
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-light btn btn-outline-info btn-sm" href="#" id="navbarDropdown" role="button"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-file" style="font-size: medium;"> File</i>
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#file"><i class="fa fa-paperclip">&nbsp;Attach File</i></a>
+                                        {% if pordr.file != "default.png" %}
+                                            <a class="dropdown-item" download  href="{{pordr.file.url }}"><i class="fa fa-download">&nbsp;Download File</i></a>
+                                        {% endif %}
+                                    </div>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-light btn btn-outline-info btn-sm mx-1" href="#" id="navbarDropdown" role="button"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-share-alt" style="font-size: medium;"> Share</i> 
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item " style="margin-left: 15px;">{% send_email object.title "New:{{object.title}}" object_or_url " Email" %}</a>
+                                        <a class="dropdown-item " href="#" style="margin-left: 15px;">{% post_to_whatsapp object_or_url " Whatsapp" %}</a>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-light btn btn-outline-info btn-sm " role="button" href="deletepurchasorder/{{ pordr.porderid }}{{ pitem.porder }}"><i class="fa fa-trash-o delete" style="font-size: medium;"> Delete</i></a>
+                                </li>
+                            </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    
+        <div  class="card card-registration card-registration-2 " style="border-radius: 15px;">
+            <div id="whatToPrin"  class="card-body p-0 ">
+                <div id="details">
+                    <div class="row g-0">
+                        <div class="col-lg-8">
+                            <div class="p-5">
+                                <!-- <div class="d-flex justify-content-between align-items-center mb-5 shadow p-3  bg-body-tertiary rounded">
+                                    <h3 class="fw-bold mb-0 text-black"><b>{{ vndr.firstname }} {{ vndr.lastname }}</b></h3>
+                                    <h6 class="mb-0" style="font-family:'Times New Roman', Times, serif;"><b>{{ cmp1.cname }}</b></h6>
+                                </div> -->
+                                <!-- <hr class="my-4"> -->
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <p class="mb-0">Company</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0 bold" style="font-family: monospace;"><b>{{cmp1.cname }}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <p class="mb-0">Email</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{cmp1.cemail}}</b></h6>
+                                    </div>
+                                </div>
+                                <div class="row mb-4  d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <p class="mb-0">Street</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{cmp1.caddress}}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <p class="mb-0">Mobile</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{cmp1.phone}}</b></h6>
+                                    </div>
+                                </div>
+                                <div class="row mb-5  d-flex justify-content-between align-items-center">
+                                    <!-- <div class="col-md-2 mt-3">
+                                        <p class="mb-0">Status</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        {% if vndr.is_active %}  
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>Active</b></h6>
+                                        {% else %}
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>Inactive</b></h6>
+                                        {% endif %}
+
+                                    </div> -->
+                                    <div class="col-md-2 mt-3"></div>
+                                    <div class="col-md-4 mt-3"></div>
+                                    
+                                </div>
+                                <hr class="my-4">
+                                <div class="row mb-4  mt-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-4 mt-2">
+                                        <h6 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;"><b>BILLED TO</b></h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3"></div>
+                                    <div class="col-md-4 mt-3"></div>
+    
+                                    <div class="col-md-2 mt-5">
+                                        <p class="mb-0">Name</p>
+                                    </div>
+                                    <div class="col-md-4 mt-5">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{pordr.vendor_name}}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-5 vl">
+                                        <p class="mb-0">Email</p>
+                                    </div>
+                                    <div class="col-md-4 mt-5">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{pordr.vendor_mail}}</b></h6>
+                                    </div>
+                                </div>
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <p class="mb-0">Street</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ pordr.billing_address }}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <!-- <p class="mb-0">Pincode</p> -->
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <!-- <h6 class="mb-0" style="font-family: monospace;"><b>{{ pordr.pincode }}</b></h6> -->
+                                    </div>
+                                    
+                                </div>
+                                <!-- <div class="row mb-5 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <p class="mb-0">Country</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ cmp1.country }}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-3">
+                                        
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        
+                                    </div>
+
+                                </div> -->
+                                <hr>
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-4 mt-2">
+                                        <h6 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;"><b>DELIVER TO</b></h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3"></div>
+                                    <div class="col-md-4 mt-3"></div>
+    
+                                    <div class="col-md-2 mt-5">
+                                        <p class="mb-0">Name</p>
+                                    </div>
+                                    <div class="col-md-4 mt-5">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{pordr.contact_name}}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-5 vl">
+                                        <p class="mb-0">Street</p>
+                                    </div>
+                                    <div class="col-md-4 mt-5">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ pordr.deliverto }}</b></h6>
+                                    </div>
+                                </div>
+                                <!-- <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <p class="mb-0" >Street</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ pordr.deliverto }}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <p class="mb-0">Pincode</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ vndr.shippincode }}</b></h6>
+                                    </div>
+                                    
+                                </div> -->
+                                <!-- <div class="row mb-5 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <p class="mb-0">Country</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ vndr.shipcountry }}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-3">
+                                        
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        
+                                    </div>
+                                </div> -->
+                                <hr class="my-4">
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-4 mt-2">
+                                        <h6 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;"><b>ITEMS</b></h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3"></div>
+                                    <div class="col-md-4 mt-3"></div>
+                                    {% for pordr in pitem %}
+                                    <div class="col-md-2 mt-5">
+                                        <p class="mb-0">Name</p>
+                                    </div>
+                                    <div class="col-md-4 mt-5">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ pordr.items }}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-5 vl">
+                                        <p class="mb-0">HSN Code</p>
+                                    </div>
+                                    <div class="col-md-4 mt-5">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ pordr.hsn }}</b></h6>
+                                    </div>
+                                </div>
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <p class="mb-0" >Quantity</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ pordr.quantity }}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <p class="mb-0">Rate</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ pordr.rate  }}</b></h6>
+                                    </div>
+                                    
+                                </div>
+                                <div class="row mb-5 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <p class="mb-0">Tax</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ pordr.tax  }}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <p class="mb-0">Discount</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ pordr.discount  }}</b></h6>
+                                    </div>
+                                    </div>
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <p class="mb-0">Total</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ pordr.amount }}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-3">
+                                        
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                    
+                            </div>
+                        </div>
+                        <div class="col-md-4 bg-grey" style="right: 16px;">
+                            <div class="p-5">
+                                <!-- <h4 class="fw-bold mb-2 mt-5 pt-1"><b>GST</b></h4> -->
+                                <hr class="my-4">
+                                <div class="row mb-3 mt-5">
+                                    <label class="col-sm-4" style="font-size: medium;">Order NO</label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-7">
+                                      <p style="font-size: medium;"><b>PO - {{pordr.puchaseorder_no }}</b></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-4" style="font-size: medium;">Date </label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-7">
+                                      <p style="font-size: medium;"><b>{{ pordr.date | date:'d-m-Y' }}</b></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-4" style="font-size: medium;">Reference</label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-7">
+                                      <p style="font-size: medium;"><b>{{ pordr.reference }}</b></p>
+                                    </div>
+                                </div>
+                                
+                                
+                                <hr class="my-4">
+                                <div class="row mb-3 mt-5">
+                                    <label class="col-sm-5" style="font-size: medium;">Payment Type</label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-6">
+                                        {% if bank %}
+                                      <p style="font-size: medium;"><b>{{bank.bankname}}</b></p>
+                                      {% else %}
+                                      <p style="font-size: medium;"><b>{{pordr.payment_type}}</b></p>
+                                      {% endif %}
+                                    </div>
+                                </div>
+                                {% if pordr.note %}
+                                <div class="row mb-3">
+                                    <label class="col-sm-5" style="font-size: medium;">Note</label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-6">
+                                      <p style="font-size: medium;"><b>{{pordr.note}}</b></p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <div class="row mb-3">
+                                    <label class="col-sm-5" style="font-size: medium;">Sub Total</label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-6">
+                                      <p style="font-size: medium;"><b>{{pordr.sub_total}}</b></p>
+                                    </div>
+                                </div>
+<!-- \                                <div class="row mb-3">
+                                    <label class="col-sm-5" style="font-size: medium;">Shipping Charge</label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-6">
+                                      <p style="font-size: medium;"><b>- {{pordr.ship_charge}}/-</b></p>
+                                    </div>
+                                </div> -->
+                                <div class="row mb-3">
+                                    <label class="col-sm-5" style="font-size: medium;">Shipping Charge</label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-6">
+                                      <p style="font-size: medium;"><b>- {{pordr.ship_charge}}/-</b></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-5" style="font-size: medium;">Grand Total</label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-6">
+                                      <p style="font-size: medium;"><b>{{pordr.grand_total}}.0/-</b></p>
+                                    </div>
+                                </div>
+                               
+                                <!-- <div class="row mb-1">
+                                    <label class="col-sm-5" style="font-size: medium;">SGST</label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-6">
+                                      <p style="font-size: medium;"><b>{{pordr.sgst}}</b></p>
+                                    </div>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="statment" style="display: none;">
+                <div id="b1" class="d-flex justify-content-center mt-3 mb-3">
+                    <button type="button" id="button1" class="btn btn-outline-info btn-sm" style="color: white; margin: 5px;">1</button>
+                    <button type="button" id="button2" class="btn btn-outline-info btn-sm" style="color: white; margin: 5px;">2</button>
+                    <button type="button" id="button3" class="btn btn-outline-info btn-sm" style="color: white; margin: 5px;">3</button>
+                </div>
+                <div id="transation">
+                    <div class="printable" id="whatToPrint1">
+                <div class="my-5 page" size="A4" >
+                    <div class="p-5">
+                        <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
+                            <div class="ribbon-inner ribbon-open">{{pordr.status}}<!----></div>
+                        </div>
+                        <div>
+                            <center class="h3" style="color: #000;"><b>PURCHASE ORDER</b></center>
+                        </div>
+                        <div class="row mt-5">
+                            <div class="col-md-8">
+                                <h5 class="text-info" style="font-weight: bold;">{{cmp1.cname }}</h5>
+                                <p class="address" style="font-weight: bold;color: #000;"> {{cmp1.caddress}}<br>
+                                    {{cmp1.city}},
+                                    {{cmp1.state}}<br>
+                                    {{cmp1.pincode}}<br>
+                                    {{cmp1.cemail}}<br>
+                                    {{cmp1.phone}}<br>
+                                </p> 
+                            </div>
+                            <div class="col-md-4">
+                                <div class="top-left">
+                                    <div class="graphic-path">
+                                        <p style="color:#000">Order NO : <b>PO - {{pordr.puchaseorder_no }}</b></p>
+                                    </div>
+                                    <div class="mt-2">
+                                        
+                                        <p style="color:#000">Date : <b>{{ pordr.date | date:'d-m-Y' }}</b></p>
+                                        <!-- <p style="color:#000">Excpected Date : <b>{{ pordr.deliver_date | date:'d-m-Y' }}</b></p> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <section class="top-content bb d-flex justify-content-between">
+                            <div class="logo">
+                                
+                            </div>
+                            
+                            <div class="top-left">
+                                
+                            </div>
+                        </section>
+                    
+            
+                        <section class="store-user">
+                            <div class="col-12">
+                                <div class="row bb pb-3 mt-3">
+                                    <div class="col-4">
+                                        <label class="text-white bg-info w-100 p-1"><b>BILL TO</b></label>
+                                        <h5 class="text-info" style="font-weight: bold;">{{pordr.vendor_name}}</h5>
+                                        <p class="address" style="font-weight: bold;margin-top: 2px; color: #000;" >
+                                            {{pordr.vendor_mail}} <br>
+                                            {{ pordr.billing_address|linebreaksbr }}
+                                            
+                                        </p>  
+                                    </div>
+                                    <div class="col-4"></div>
+                                    <div class="col-4">
+                                        <label class="text-white bg-info w-100 p-1"><b>DELIVER TO</b></label>
+                                        <h5 class="text-info" style="font-weight: bold;">{{pordr.contact_name}}</h5>
+                                        <p class="address" style="font-weight: bold;margin-top: 2px; color: #000;">{{ pordr.deliverto|linebreaksbr }} </p>   
+                                    </div>
+                                </div>
+                               
+                            </div>
+                        </section>
+            
+                        <section class="product-area mt-2">
+                            <table class="table table-hover table-bordered table-primary">
+                                <thead>
+                                    <tr class="table-primary">
+                                        <th class="text-center" style="color:#000">Items</th>
+                                        <th class="text-center" style="color:#000">HSN Code</th>
+                                        <th class="text-center" style="color:#000">Quantity</th>
+                                        <th class="text-center" style="color:#000">Rate</th>
+                                        <th class="text-center" style="color:#000">Tax</th>
+                                        <th class="text-center" style="color:#000">Discount</th>
+                                        <th class="text-center" style="color:#000">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for pordr in pitem %}
+                                        <tr>
+                                            <td class="text-center" style="color:#000">{{ pordr.items }}</td>
+                                            <td class="text-center" style="color:#000">{{ pordr.hsn }}</td>
+                                            <td class="text-center" style="color:#000">{{ pordr.quantity }}</td>
+                                            <td class="text-center" style="color:#000">{{ pordr.rate  }}</td>
+                                            <td class="text-center" style="color:#000">{{ pordr.tax  }}</td>
+                                            <td class="text-center" style="color:#000">{{ pordr.discount  }}</td>
+                                            <td class="text-center" style="color:#000">{{ pordr.amount }}</td>
+                                        </tr>
+                                    {% endfor %} 
+                                </tbody>
+                            </table>
+                        </section>
+            
+                        <section class="balance-info">
+                            <div class="row mt-3">
+                                <div class="col-4">
+                                    <table class="table table-borderless">
+                                        <tbody>
+                                            
+                                            <tr >
+                                                <td style="color: #000;text-align: left;">Payment Type</td>
+                                                <td style="color: #000;text-align: left;">:</td>
+                                                
+                                                {% if bank %}
+                                                <th style="color: #000;text-align: center;">{{bank.bankname}}</th>
+                                                {% else %}
+                                                <th style="color: #000;text-align: center;">{{pordr.payment_type}}</th>
+                                                {% endif %}
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                
+                                            </tr>
+                                            {% if pordr.note %}
+                                            <tr >
+                                                <td style="color: #000;text-align: left;">Note</td>
+                                                <td style="color: #000;text-align: left;">:</td>
+                                                <th style="color: #000;text-align: center;">{{pordr.note}}</th>
+                                            </tr>
+                                            {% endif %}
+
+                                        </tbody>
+                                    </table>
+                                    
+                                </div>
+                                <div class="col-4"></div>
+                                <div class="col-4">
+                                    <table class="table table-borderless">
+                                        <tbody>
+                                            <tr >
+                                                <td style="color: #000;">Sub Total</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-center" style="color: #000;">{{pordr.sub_total}}</td>
+                                            </tr>
+                                            
+                                            {% if pordr.igst != "0" %}
+                                            <tr >
+                                                <td style="color: #000;">IGST</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-center" style="color: #000;">{{pordr.igst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if pordr.cgst != "0" %}
+                                            <tr>
+                                                <td style="color: #000;">CGST</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-center" style="color: #000;">{{pordr.cgst}}</td>
+                                                
+                                            </tr>
+                                            {% endif %}
+                                            {% if pordr.sgst != "0" %}
+                                            <tr>
+                                                <td style="color: #000;">SGST</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-center" style="color: #000;">{{pordr.sgst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            <tr >
+                                                <td style="color: #000;">Shipping Charge</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-center" style="color: #000;">{{pordr.ship_charge}}</td>
+                                            </tr>
+                                            {% if pordr.tcs != "0.00" %}
+                                            <tr style="display: none;">
+                                                <td style="color:black">TCS:</td>
+                                                <td style="color:black">{{pordr.tcs}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            
+                                        </tbody>
+
+                                    </table>
+                                    <hr>
+                                    <table class="table table-borderless">
+                                        <tbody>
+                                            <tr >
+                                                <th style="color: #000;">Grand Total</th>
+                                                <th style="color: #000;">:</th>
+                                                <th class="text-center" style="color: #000;">{{pordr.grand_total}}.0</th>
+                                            </tr>
+                                            <!-- <tr >
+                                                <td style="color: #000;">Advance Amount</td>
+                                                <td style="color: #000;">:</td>
+                                                <th class=" text-center" style="color: #000;">{{pordr.paid_amount}}</th>
+                                            </tr>
+                                            <tr >
+                                                <td style="color: #000;">Balance Amount</td>
+                                                <td style="color: #000;">:</td>
+                                                <th class="text-center" style="color: #000;">{{pordr.balance_amount}}</th>
+                                            </tr> -->
+
+                                        </tbody>
+
+                                    </table>
+                                    
+                                    
+                                    
+                                    
+                                </div> 
+                            </div>
+                            <div class="row container-fluid">
+                                <div class="col-sm-3 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b></label></div>
+                                <div class="col-sm-4 m-0 p-0 text-dark">________________________</div>
+                                <div class="col-sm-4 m-0 p-0"></div>
+                            </div>
+                        </section>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+                    <div class="printable" id="whatToPrint2">
+                <div class="my-5 page" size="A4">
+                    <div class="p-5">
+                <div style=" background: linear-gradient(to bottom, #427D9D, #164863);">
+                        <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
+                            <div class="ribbon-inner ribbon-open" style="background-color: #1c72b4;">{{pordr.status}}<!----></div>
+                        </div>
+                        <div>
+                            <center class="h3" style="color: #fff;"><b>PURCHASE ORDER</b></center>
+                        </div>
+                        <div class="row mt-5">
+                            <div class="col-md-8">
+                                <h5 class="text-white" style="font-weight: bold;">{{cmp1.cname }}</h5>
+                                <p class="address" style="font-weight: bold;color: #fff;"> {{cmp1.caddress}}<br>
+                                    {{cmp1.city}},
+                                    {{cmp1.state}}<br>
+                                    {{cmp1.pincode}}<br>
+                                    {{cmp1.cemail}}<br>
+                                    {{cmp1.phone}}<br>
+                                </p> 
+                            </div>
+                            <div class="col-md-4">
+                                <div class="top-left">
+                                    <div class="graphic-path">
+                                        <p style="color:#fff;background-color: #1c72b4;">Order NO : <b>PO - {{pordr.puchaseorder_no }}</b></p>
+                                    </div>
+                                    <div class="mt-2">
+                                        
+                                        <p style="color:#fff">Date : <b>{{ pordr.date | date:'d-m-Y' }}</b></p>
+                                        <!-- <p style="color:#fff">Excpected Date : <b>{{ pordr.deliver_date | date:'d-m-Y' }}</b></p> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        <section class="top-content bb d-flex justify-content-between">
+                            <div class="logo">
+                                
+                            </div>
+                            
+                            <div class="top-left">
+                                
+                            </div>
+                        </section>
+                    
+            
+                        <section class="store-user">
+                            <div class="col-12">
+                                <div class="row bb pb-3 mt-3">
+                                    <div class="col-4">
+                                        <label class="text-white w-100 p-1" style="background-color: #164863;"><b>BILL TO</b></label>
+                                        <h5 class="" style="font-weight: bold;color: #164863;">{{pordr.vendor_name}}</h5>
+                                        <p class="address" style="font-weight: bold;margin-top: 2px; color: #000;" >
+                                            {{pordr.vendor_mail}} <br>
+                                            {{ pordr.billing_address|linebreaksbr }}
+                                            
+                                        </p>  
+                                    </div>
+                                    <div class="col-4"></div>
+                                    <div class="col-4">
+                                        <label class="text-white w-100 p-1" style="background-color: #164863;"><b>DELIVER TO</b></label>
+                                        <h5 class="" style="font-weight: bold;color: #164863;">{{pordr.contact_name}}</h5>
+                                        <p class="address" style="font-weight: bold;margin-top: 2px; color: #000;">{{ pordr.deliverto|linebreaksbr }} </p>   
+                                    </div>
+                                </div>
+                               
+                            </div>
+                        </section>
+            
+                        <section class="product-area mt-2">
+                            <table class="table table-hover table-bordered" style="background-color: #164863;">
+                                <thead>
+                                    <tr class="">
+                                        <th class="text-center">Items</th>
+                                        <th class="text-center">HSN Code</th>
+                                        <th class="text-center">Quantity</th>
+                                        <th class="text-center">Rate</th>
+                                        <th class="text-center">Tax</th>
+                                        <th class="text-center">Discount</th>
+                                        <th class="text-center">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for pordr in pitem %}
+                                        <tr>
+                                            <td class="text-center">{{ pordr.items }}</td>
+                                            <td class="text-center">{{ pordr.hsn }}</td>
+                                            <td class="text-center">{{ pordr.quantity }}</td>
+                                            <td class="text-center">{{ pordr.rate  }}</td>
+                                            <td class="text-center">{{ pordr.tax  }}</td>
+                                            <td class="text-center">{{ pordr.discount  }}</td>
+                                            <td class="text-center">{{ pordr.amount }}</td>
+                                        </tr>
+                                    {% endfor %} 
+                                </tbody>
+                            </table>
+                        </section>
+            
+                        <section class="balance-info">
+                            <div class="row mt-3">
+                                <div class="col-4">
+                                    <table class="table table-borderless">
+                                        <tbody>
+                                            
+                                            <tr >
+                                                <td style="color: #000;text-align: left;">Payment Type</td>
+                                                <td style="color: #000;text-align: left;">:</td>
+                                                
+                                                {% if bank %}
+                                                <th style="color: #000;text-align: center;">{{bank.bankname}}</th>
+                                                {% else %}
+                                                <th style="color: #000;text-align: center;">{{pordr.payment_type}}</th>
+                                                {% endif %}
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                
+                                            </tr>
+                                            {% if pordr.note %}
+                                            <tr >
+                                                <td style="color: #000;text-align: left;">Note</td>
+                                                <td style="color: #000;text-align: left;">:</td>
+                                                <th style="color: #000;text-align: center;">{{pordr.note}}</th>
+                                            </tr>
+                                            {% endif %}
+
+                                        </tbody>
+                                    </table>
+                                    
+                                </div>
+                                <div class="col-4"></div>
+                                <div class="col-4">
+                                    <table class="table table-borderless">
+                                        <tbody>
+                                            <tr >
+                                                <td style="color: #000;">Sub Total</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-center" style="color: #000;">{{pordr.sub_total}}</td>
+                                            </tr>
+                                            
+                                            {% if pordr.igst != "0" %}
+                                            <tr >
+                                                <td style="color: #000;">IGST</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-center" style="color: #000;">{{pordr.igst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if pordr.cgst != "0" %}
+                                            <tr>
+                                                <td style="color: #000;">CGST</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-center" style="color: #000;">{{pordr.cgst}}</td>
+                                                
+                                            </tr>
+                                            {% endif %}
+                                            {% if pordr.sgst != "0" %}
+                                            <tr>
+                                                <td style="color: #000;">SGST</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-center" style="color: #000;">{{pordr.sgst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            <tr >
+                                                <td style="color: #000;">Shipping Charge</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-center" style="color: #000;">{{pordr.ship_charge}}</td>
+                                            </tr>
+                                            {% if pordr.tcs != "0.00" %}
+                                            <tr style="display: none;">
+                                                <td style="color:black">TCS:</td>
+                                                <td style="color:black">{{pordr.tcs}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            
+                                        </tbody>
+
+                                    </table>
+                                    <hr>
+                                    <table class="table table-borderless">
+                                        <tbody>
+                                            <tr >
+                                                <th style="color: #000;">Grand Total</th>
+                                                <th style="color: #000;">:</th>
+                                                <th class="text-center" style="color: #000;">{{pordr.grand_total}}.0</th>
+                                            </tr>
+                                            <!-- <tr >
+                                                <td style="color: #000;">Advance Amount</td>
+                                                <td style="color: #000;">:</td>
+                                                <th class=" text-center" style="color: #000;">{{pordr.paid_amount}}</th>
+                                            </tr>
+                                            <tr >
+                                                <td style="color: #000;">Balance Amount</td>
+                                                <td style="color: #000;">:</td>
+                                                <th class="text-center" style="color: #000;">{{pordr.balance_amount}}</th>
+                                            </tr> -->
+
+                                        </tbody>
+
+                                    </table>
+                                    
+                                    
+                                    
+                                    
+                                </div> 
+                            </div>
+                            <div class="row container-fluid">
+                                <div class="col-sm-3 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b></label></div>
+                                <div class="col-sm-4 m-0 p-0 text-dark">________________________</div>
+                                <div class="col-sm-4 m-0 p-0"></div>
+                            </div>
+                        </section>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+                    <div class="printable" id="whatToPrint3">
+                <div class="my-5 page" size="A4">
+                    <div class="p-5">
+                        <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis bg-dark">
+                            <div class="ribbon-inner ribbon-open bg-dark">{{pordr.status}}<!----></div>
+                        </div>
+                        <div>
+                            <center class="h3 bg-dark" style="color: #fff;background-color: #444;"><b>PURCHASE ORDER</b></center>
+                        </div>
+                        <div class="row mt-5">
+                            <div class="col-md-8">
+                                <h5 class="text-dark" style="font-weight: bold;">{{cmp1.cname }}</h5>
+                                <p class="address" style="font-weight: bold;color: #000;"> {{cmp1.caddress}}<br>
+                                    {{cmp1.city}},
+                                    {{cmp1.state}}<br>
+                                    {{cmp1.pincode}}<br>
+                                    {{cmp1.cemail}}<br>
+                                    {{cmp1.phone}}<br>
+                                </p> 
+                            </div>
+                            <div class="col-md-4">
+                                <div class="top-left">
+                                    <div class="graphic-path">
+                                        <p style="color:#fff;background-color: rgb(121, 122, 122);">Order NO : <b>PO - {{pordr.puchaseorder_no }}</b></p>
+                                    </div>
+                                    <div class="mt-2">
+                                        
+                                        <p style="color:#000">Date : <b>{{ pordr.date | date:'d-m-Y' }}</b></p>
+                                        <!-- <p style="color:#000">Excpected Date : <b>{{ pordr.deliver_date | date:'d-m-Y' }}</b></p> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <section class="top-content bb d-flex justify-content-between">
+                            <div class="logo">
+                                
+                            </div>
+                            
+                            <div class="top-left">
+                                
+                            </div>
+                        </section>
+                    
+            
+                        <section class="store-user">
+                            <div class="col-12">
+                                <div class="row bb pb-3 mt-3">
+                                    <div class="col-4">
+                                        <label class="text-white bg-dark w-100 p-1"><b>BILL TO</b></label>
+                                        <h5 class="text-dark" style="font-weight: bold;">{{pordr.vendor_name}}</h5>
+                                        <p class="address" style="font-weight: bold;margin-top: 2px; color: #000;" >
+                                            {{pordr.vendor_mail}} <br>
+                                            {{ pordr.billing_address|linebreaksbr }}
+                                            
+                                        </p>  
+                                    </div>
+                                    <div class="col-4"></div>
+                                    <div class="col-4">
+                                        <label class="text-white bg-dark w-100 p-1"><b>DELIVER TO</b></label>
+                                        <h5 class="text-dark" style="font-weight: bold;">{{pordr.contact_name}}</h5>
+                                        <p class="address" style="font-weight: bold;margin-top: 2px; color: #000;">{{ pordr.deliverto|linebreaksbr }} </p>   
+                                    </div>
+                                </div>
+                               
+                            </div>
+                        </section>
+            
+                        <section class="product-area mt-2">
+                            <table class="table table-hover table-bordered table-dark text-white">
+                                <thead>
+                                    <tr class="thead-dark">
+                                        <th class="text-center">Items</th>
+                                        <th class="text-center">HSN Code</th>
+                                        <th class="text-center">Quantity</th>
+                                        <th class="text-center">Rate</th>
+                                        <th class="text-center">Tax</th>
+                                        <th class="text-center">Discount</th>
+                                        <th class="text-center">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for pordr in pitem %}
+                                        <tr>
+                                            <td class="text-center">{{ pordr.items }}</td>
+                                            <td class="text-center">{{ pordr.hsn }}</td>
+                                            <td class="text-center">{{ pordr.quantity }}</td>
+                                            <td class="text-center">{{ pordr.rate  }}</td>
+                                            <td class="text-center">{{ pordr.tax  }}</td>
+                                            <td class="text-center">{{ pordr.discount  }}</td>
+                                            <td class="text-center">{{ pordr.amount }}</td>
+                                        </tr>
+                                    {% endfor %} 
+                                </tbody>
+                            </table>
+                        </section>
+            
+                        <section class="balance-info">
+                            <div class="row mt-3">
+                                <div class="col-4">
+                                    <table class="table table-borderless">
+                                        <tbody>
+                                            
+                                            <tr >
+                                                <td style="color: #000;text-align: left;">Payment Type</td>
+                                                <td style="color: #000;text-align: left;">:</td>
+                                                
+                                                {% if bank %}
+                                                <th style="color: #000;text-align: center;">{{bank.bankname}}</th>
+                                                {% else %}
+                                                <th style="color: #000;text-align: center;">{{pordr.payment_type}}</th>
+                                                {% endif %}
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                
+                                            </tr>
+                                            {% if pordr.note %}
+                                            <tr >
+                                                <td style="color: #000;text-align: left;">Note</td>
+                                                <td style="color: #000;text-align: left;">:</td>
+                                                <th style="color: #000;text-align: center;">{{pordr.note}}</th>
+                                            </tr>
+                                            {% endif %}
+
+                                        </tbody>
+                                    </table>
+                                    
+                                </div>
+                                <div class="col-4"></div>
+                                <div class="col-4">
+                                    <table class="table table-borderless">
+                                        <tbody>
+                                            <tr >
+                                                <td style="color: #000;">Sub Total</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-center" style="color: #000;">{{pordr.sub_total}}</td>
+                                            </tr>
+                                            
+                                            {% if pordr.igst != "0" %}
+                                            <tr >
+                                                <td style="color: #000;">IGST</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-center" style="color: #000;">{{pordr.igst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if pordr.cgst != "0" %}
+                                            <tr>
+                                                <td style="color: #000;">CGST</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-center" style="color: #000;">{{pordr.cgst}}</td>
+                                                
+                                            </tr>
+                                            {% endif %}
+                                            {% if pordr.sgst != "0" %}
+                                            <tr>
+                                                <td style="color: #000;">SGST</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-center" style="color: #000;">{{pordr.sgst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            <tr >
+                                                <td style="color: #000;">Shipping Charge</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-center" style="color: #000;">{{pordr.ship_charge}}</td>
+                                            </tr>
+                                            {% if pordr.tcs != "0.00" %}
+                                            <tr style="display: none;">
+                                                <td style="color:black">TCS:</td>
+                                                <td style="color:black">{{pordr.tcs}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            
+                                        </tbody>
+
+                                    </table>
+                                    <hr>
+                                    <table class="table table-borderless">
+                                        <tbody>
+                                            <tr >
+                                                <th style="color: #000;">Grand Total</th>
+                                                <th style="color: #000;">:</th>
+                                                <th class="text-center" style="color: #000;">{{pordr.grand_total}}.0</th>
+                                            </tr>
+                                            <!-- <tr >
+                                                <td style="color: #000;">Advance Amount</td>
+                                                <td style="color: #000;">:</td>
+                                                <th class=" text-center" style="color: #000;">{{pordr.paid_amount}}</th>
+                                            </tr>
+                                            <tr >
+                                                <td style="color: #000;">Balance Amount</td>
+                                                <td style="color: #000;">:</td>
+                                                <th class="text-center" style="color: #000;">{{pordr.balance_amount}}</th>
+                                            </tr> -->
+
+                                        </tbody>
+
+                                    </table>
+                                    
+                                    
+                                    
+                                    
+                                </div> 
+                            </div>
+                            <div class="row container-fluid">
+                                <div class="col-sm-3 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b></label></div>
+                                <div class="col-sm-4 m-0 p-0 text-dark">________________________</div>
+                                <div class="col-sm-4 m-0 p-0"></div>
+                            </div>
+                        </section>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <div class="modal fade" id="file" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" style="background-color: #213b52;">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Add File</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="{% url 'porder_add_file' pordr.porderid  %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                        <div class="modal-body">
+                            <input type="file" class="form-control" name="file">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-info" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-outline-info">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" style="background-color: #233D52;">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="commentModalLabel">Add Comment</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="commentsContainer">
+                        <form method="post" action="{% url 'add_porder_comment' pordr.porderid %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="commentText">Comment:</label>
+                                <input type="text" class="form-control" id="commentText" name="comment_text" required>
+                            </div>
+                           
+                        <div class="container-fluid">
+                        <table class="table table-responsive-md mt-4">
+                            <thead>
+                            <tr>
+                                <th>sl no.</th>
+                                <th>Comments</th>
+                                <th>Delete</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for comment in comments %}
+                            <tr  class="table-row">
+                                <td>{{forloop.counter }}</td>
+                                <td>{{ comment.comment_text }}</td>
+                                <td><a href="{% url 'delete_porder_comment' comment.id %}" class="btn-sm delete-comment">Delete</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <button type="submit" onclick="submitCommentForm()" class="btn btn-primary">Submit</button>
+            </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+$(document).ready(function () {
+        $(document).on('click', '.btn-status', function () {
+            var form = $(this).closest('form#updateStatusForm');
+            if (form) {
+                form.submit();
+            }
+        });
+
+        $(document).on('submit', 'form#updateStatusForm', function (event) {
+            event.preventDefault();
+
+            var porderid = $(this).data('porder-id');
+            var status = $(this).find('input[name="status"]').val();
+
+            $.ajax({
+                type: "POST",
+                url: "{% url 'update_purchase_status' porder_id=pordr.porderid %}",
+                data: {
+                    status: status
+                },
+                success: function (data) {
+                    console.log('Status updated successfully');
+                    window.location.reload();
+                },
+                error: function (xhr, textStatus, error) {
+                    console.error('Error updating status:', error);
+                }
+            });
+        });
+    });
+        </script>
+
+<script>
+    document.getElementById("button1").addEventListener("click", function () {
+        document.getElementById("whatToPrint1").style.display = "block";
+        document.getElementById("whatToPrint2").style.display = "none";
+        document.getElementById("whatToPrint3").style.display = "none";
+    });
+
+    document.getElementById("button2").addEventListener("click", function () {
+        document.getElementById("whatToPrint1").style.display = "none";
+        document.getElementById("whatToPrint2").style.display = "block";
+        document.getElementById("whatToPrint3").style.display = "none";
+    });
+
+    document.getElementById("button3").addEventListener("click", function () {
+        document.getElementById("whatToPrint1").style.display = "none";
+        document.getElementById("whatToPrint2").style.display = "none";
+        document.getElementById("whatToPrint3").style.display = "block";
+    });
+</script>
+
+
+        <script>
+            function Details() {
+                console.log("Details function called");
+                document.getElementById('details').style.display = 'block';
+                document.getElementById('statment').style.display = 'none';
+                document.getElementById('b1').hidden = true;
+                document.getElementById('transation').hidden = true;  
+            }
+
+            function Statment() {
+                console.log("Statment function called");
+                document.getElementById('details').style.display = 'none';
+                document.getElementById('statment').style.display = 'block';
+                document.getElementById('b1').hidden = false;
+                document.getElementById('transation').hidden = false;
+            }
+
+
+
+        </script>
+        <!-- <script>
+            $(function () {
+                $('#cmd').click(function () {
+                    var doc = new jsPDF();
+                    doc.addHTML($('#content')[0], 15, 15, {
+                        'background': '#fff',
+                    }, function() {
+                        doc.save('sample-file.pdf');
+                    });
+                });
+            });
+        </script> -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <!-- Include html2canvas library -->
+        <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+        
+        <!-- Include jsPDF library -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>     
+<script>
+
+    function printDiv() {
+        // Show the printable content
+        $(".printable:visible").show();
+
+        // Print the content
+        window.print();
+
+        // Hide the printable content again
+        // $(".printable:visible").hide();
+    }
+
+
+
+
+function generatePDF() {
+    var visibleContent = $(".printable:visible")[0];
+
+    var doc = new jsPDF('l', 'pt', 'a4');  // Use 'a4' as the third parameter for standard A4 size
+
+    html2canvas(visibleContent, { scale: 2 }).then((canvas) => {
+        var imgData = canvas.toDataURL("image/png", 1.0);  // Use 1.0 quality for the image
+
+        var imgWidth = 700;  // Set the width of the image
+        var imgHeight = canvas.height * imgWidth / canvas.width;
+
+        doc.addImage(imgData, 'PNG', 15, 10, imgWidth, imgHeight);
+        doc.save("Document.pdf");
+    });
+}
+
+
+$(document).ready(function () {
+    $(".printable").hide();
+    $("#whatToPrint1").show();
+
+    $("#button1").click(function () {
+        $(".printable").hide();
+        $("#whatToPrint1").show();
+    });
+
+    $("#button2").click(function () {
+        $(".printable").hide();
+        $("#whatToPrint2").show();
+    });
+
+    $("#button3").click(function () {
+        $(".printable").hide();
+        $("#whatToPrint3").show();
+    });
+});
+
+
+</script>
+       
+        <!-- <script>
+            function printDiv() {
+                var printContents = document.getElementById("whatToPrint").innerHTML;
+                var originalContents = document.body.innerHTML;
+
+                document.body.innerHTML = printContents;
+
+                window.print();
+
+                document.body.innerHTML = originalContents;
+            }
+        </script> -->
+
+        <script type="text/javascript">
+            $('.delete').click(function(e){
+                var result = confirm("Are you sure you want to delete this record? If you delete this, not retrive");
+
+                if(!result) {
+                    e.preventDefault();
+                }
+            });
+        </script>
+
+    {% endif %}
+    {% endblock %}

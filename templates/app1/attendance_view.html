@@ -1,0 +1,640 @@
+<!-- reshna-holiday -->
+{% extends 'app1/base.html' %}
+{% block body %}
+{% load social_share %}
+    {% load static %}
+    {% if user.is_authenticated %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js" ></script>
+    <link href="{% static 'assets/plugins/fullcalendar/css/main.min.css' %}" rel="stylesheet">
+    <script src="{% static 'assets/plugins/fullcalendar/js/main.min.js' %}"></script>
+   
+    <style> .card-registration .select-input.form-control[readonly]:not([disabled]) {
+        font-size: 1rem;
+        line-height: 2.15;
+        padding-left: .75em;
+        padding-right: .75em;
+    }
+    .card-registration .select-arrow {
+        top: 13px;
+    }
+    .bg-grey {
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+    @media (min-width: 992px) {
+        .card-registration-2 .bg-grey {
+            border-top-right-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+    }
+    @media (max-width: 991px) {
+        .card-registration-2 .bg-grey {
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+    }
+    .vl {
+        border-left: 6px solid gray;
+    }
+    .hr {
+        border: 0;
+        clear:both;
+        display:block;
+        width: 96%;               
+        background-color:#000000;
+        height: 1px;
+    }
+    .in{
+        border: none;
+        color: #fff;
+        text-align: end;
+        font-size: large;
+        background-color: rgba(0, 0, 0, 0.01);
+    }
+    .calc{
+        border: none;
+        color: #fff;
+        text-align: left;
+        font-size: 40px;
+        background-color: rgba(0, 0, 0, 0.001);
+    }
+    .tx{
+        border: none;
+        width: 21px;
+        color: rgba(255, 255, 255, 0.8);
+        text-align: left;
+        background-color: rgba(0, 0, 0, 0.01);
+    }
+        /* #div1{
+            width: 33.33%;
+            float: left;
+            height: 100px;
+            text-align: left;
+        }
+        #div2{
+           
+            width: 33.33%;
+            margin: auto;
+            height: 100px;
+            text-align: left;
+        }
+        #div3{
+           
+            width: 33.33%;
+            float: right;
+            margin-top: -100px;
+            height: 100px;    
+        } */
+        .ribbon .ribbon-inner {
+            text-align: center;
+            color: #fff;
+            top: -20px;
+            left: -90px;
+            width: 120px;
+            padding: 3px;
+          
+        }
+        .ribbon .ribbon-open {
+            background-color: #268ddd;
+            border-color: #1c72b4;
+        }
+        :root {
+            --body-bg: rgb(204, 204, 204);
+            --white: #ffffff;
+            --darkWhite: #ccc;
+            --black: #000000;
+            --dark: #615c60;
+            --themeColor: #22b8d1;
+            --pageShadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+        }
+      
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap');
+        body {
+            background-color: var(--body-bg);
+        }
+        .page {
+            background: var(--white);
+            display: block;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: var(--pageShadow);
+        }
+       
+        .bb {
+            border-bottom: 3px solid var(--darkWhite);
+        }
+        .top-content {
+            padding-bottom: 15px;
+        }
+        .logo img {
+            height: 60px;
+        }
+        .top-left p {
+            margin: 0;
+            color: #000000;
+        }
+        .top-left .graphic-path {
+            height: 40px;
+            position: relative;
+        }
+        .top-left .graphic-path::before {
+            content: "";
+            height: 20px;
+            background-color: var(--dark);
+            position: absolute;
+            left: 15px;
+            right: 0;
+            top: -15px;
+            z-index: 2;
+        }
+        .top-left .graphic-path::after {
+            content: "";
+            height: 22px;
+            width: 17px;
+            background: var(--black);
+            position: absolute;
+            top: -13px;
+            left: 6px;
+            transform: rotate(45deg);
+        }
+        .top-left .graphic-path p {
+          
+            height: 40px;
+            left: 0;
+            right: -100px;
+            text-transform: uppercase;
+            background-color: var(--themeColor);
+            font: 26px;
+            z-index: 3;
+            position: absolute;
+            padding-left: 10px;
+        }
+        .store-user {
+            padding-bottom: 25px;
+        }
+        .store-user p {
+            margin: 0;
+            font-weight: 600;
+            color: #000000;
+        }
+        .store-user .address {
+            font-weight: 400;
+        }
+        .store-user h5 {
+            color: var(--themeColor);
+            font-family: 'Rajdhani', sans-serif;
+        }
+        .extra-info p span {
+            font-weight: 400;
+        
+        }
+        thead {
+            color: var(--white);
+            background: var(--themeColor);
+        }
+        .table td,
+        .table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+        tr th:first-child,
+        tr td:first-child {
+            text-align: left;
+        }
+        .media img {
+            height: 60px;
+            width: 60px;
+        }
+        .media p {
+            font-weight: 400;
+            margin: 0;
+          
+        }
+        .media p.title {
+            font-weight: 600;    
+        }
+        .balance-info .table td,
+        .balance-info .table th {
+            padding: 0;
+            border: 0;
+        }
+        .balance-info tr td:first-child {
+            font-weight: 600;
+        }
+        tfoot {
+            border-top: 2px solid var(--darkWhite);
+        }
+        tfoot td {
+            font-weight: 600;
+        }
+        .cart-bg {
+            height: 250px;
+            bottom: 32px;
+            left: -40px;
+            opacity: 0.3;
+            position: absolute;
+        }
+        footer {
+            text-align: center;
+            position: absolute;
+            bottom: 30px;
+            left: 75px;
+        }
+        footer hr {
+            margin-bottom: -22px;
+            border-top: 3px solid var(--darkWhite);
+        }
+        footer a {
+            color: var(--themeColor);
+        }
+        footer p {
+            padding: 6px;
+            border: 3px solid var(--darkWhite);
+            background-color: var(--white);
+            display: inline-block;
+            color: #000000;
+        }
+        table.table-bordered{
+            color: 1px solid #000;
+        }
+        #sign{
+            border: none;
+            border-bottom: 2px solid #000;
+        }
+        hr {
+            border: 0;
+            clear:both;
+            display:block;
+            width: 96%;               
+            background-color:#000000;
+            height: 1px;
+        }
+
+        .tabcontent{
+        display: none;
+        padding: 6px 12px;
+        border-top: none;
+    }
+
+    .page {
+        /* background: azure; */
+        display: block;
+        margin: 0 auto;
+        position: relative;
+    
+    }
+
+    .page[size="A4"] {
+        width: 17cm;
+        height: 23cm;
+        overflow: hidden;
+       
+    }
+
+    .print-only {
+        display: none;
+        height: auto;
+        overflow-y: auto;
+        border: none;
+     
+    }
+
+    /* @media print {
+     
+        .page[size="A4"] {
+        width: 21cm;
+        height: 29.7cm;
+        
+        }
+        body * {
+            visibility: hidden;
+        }
+
+        header {
+            display: none;
+        }
+
+        .print-only * {
+            visibility: visible;
+        }
+
+        .print-only { */
+            /* position: absolute; */
+            /* position: fixed;
+            left: 0;
+            top: 0;
+            right: 0;
+            height: auto;
+            page-break-before: always;
+            page-break-inside: avoid;
+            
+            
+        }
+        #whatToPrint  {
+        color: #000 !important;
+    }
+
+  
+    #whatToPrint hr {
+        border-color: #000 !important;
+    }
+        @page {
+            size:100%;
+            margin: 0;
+            height: auto;
+           
+        }
+        td {
+                color: black !important; 
+
+            }
+    
+        .ribbon-open{
+            color: black !important; 
+        }
+    } */
+    @media print {
+    .page[size="A4"] {
+        width: 21cm;
+        height: 29.7cm;
+    }
+    
+    body * {
+        visibility: hidden;
+    }
+
+    header {
+        display: none;
+    }
+
+    .print-only * {
+        visibility: visible;
+    }
+
+    .print-only {
+        position: fixed;
+        left: 0;
+        top: 0;
+        right: 0;
+        height: auto;
+        page-break-before: always;
+        page-break-inside: avoid;
+    }
+
+    #whatToPrint {
+        color: #000 !important;
+    }
+
+    #whatToPrint .bb {
+        border-color: #000 !important;
+    }
+
+    @page {
+        size: 100%;
+        margin: 0;
+        height: auto;
+    }
+
+   
+    .print-only td {
+        color: black !important;
+    }
+
+    
+    .print-only .ribbon-open {
+        color: black !important;
+    }
+    table.table-bordered td {
+        color: black !important;
+    }
+
+    /* In your CSS stylesheet */
+.text-black {
+    color: #000 !important;
+}
+
+}
+
+    </style>
+
+
+    <div class="page-content" >
+        <div class="card radius-15">
+            <div class="card-body">
+                <div class="card-title">
+                    <center><h2 class="mb-0">ATTENDANCE VIEW</h2></center>
+                    <hr>
+                    <a style="padding: 10px; cursor: pointer; font-size: large;" onclick="Calender()">Calender</a>
+                    <a style="padding: 10px; cursor: pointer; font-size: large;" onclick="Overview()" >Overview</a>
+                    <a style="padding: 10px; cursor: pointer; font-size: large;" onclick="Template()" >Template</a>
+                   
+                    <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgba(0,0,0,.01);">
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                          <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarScroll">
+                            <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                              <li class="nav-item active mx-1">
+                                <a class="nav-link text-light  btn btn-outline-info rounded-pill text-grey p-1" role="button" onclick="printSection('whatToPrint')">&nbsp;&nbsp;Print&nbsp;&nbsp;</a>
+                              </li>
+                               
+                                   
+                                <li class="nav-item mx-1">
+                                    <a class="nav-link text-light  btn btn-outline-info rounded-pill text-grey p-1" role="button" href="{% url 'pdf_attendance' year=year month=month employee=employee %}">
+                                        &nbsp;&nbsp;PDF&nbsp;&nbsp;
+                                    </a>
+                                </li>
+                                
+                                <!-- <li class="nav-item">
+                                    <a class="nav-link text-light btn" role="button" href=""><i class=" fa fa-pencil">Edit</i></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-light btn" role="button" href=""><i class="fa fa-trash-o delete">Delete</i></a>
+                                </li>
+                                -->
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    
+        <div class="card card-registration card-registration-2 " style="border-radius: 15px;"  >
+            <div class="card-body p-0" >
+               
+            <div class="container-fluid" id="calendar">
+                <!-- <h3 style="text-align: center;">Holidays for {{ month }} {{ year }}</h3> -->
+            
+                <!-- Display the FullCalendar -->
+                <div id="attendance-calendar" class="p-3"></div>
+            </div>
+        </div>
+        <div class="container my-4" style="background-color: white; display: none;" id="whatToPrint" >
+            <div class="col-md-12 p-3">
+                <!-- <h4 class="text-center">Attendance for {{ employee_attendance.employee_name }} - {{ employee_attendance.month }} {{ employee_attendance.year }}</h4> -->
+            <h4 style="color: #000000; text-align: center;">Attendance for {{ employee_attendance.employee_name }} - {{ employee_attendance.month }} {{ employee_attendance.year }}</h4>
+            <p style="color: #000000; text-align: center;">Total Holidays: {{ employee_attendance.holidays }} | Working Days: {{ employee_attendance.working_days }}|
+                Absent Days: {{ employee_attendance.absent_days }}</p>
+        </div>
+    
+        <table class="table table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th class="text-center" style="color:#000">Date</th>
+                    <th class="text-center" style="color:#000">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in attendance_data %}
+                <tr>
+                    <td class="text-center" style="color:#000">{{ entry.date }}</td>
+                    <td class="text-center" style="color:#000">{{ entry.status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+
+
+        </div>
+        <div class="container my-4" style="display: none;" id="overview" >
+            <div class="col-md-12 p-3">
+                <h4 class="text-center">Attendance for {{ employee_attendance.employee_name }} - {{ employee_attendance.month }} {{ employee_attendance.year }}</h4>
+                <!-- <h4 class="text-center">Attendance for {{ employee_attendance.month }} {{ employee_attendance.year }}</h4> -->
+                <p class="text-center">
+                    Total Holidays: {{ employee_attendance.holidays }} |
+                    Working Days: {{ employee_attendance.working_days }} |
+                    Absent Days: {{ employee_attendance.absent_days }}
+                </p>
+           </div>
+        
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                      
+                        <th class="text-center" >Date</th>
+                        <th class="text-center" >Status</th>
+                        <th class="text-center" >Actions</th>
+                      
+                    </tr>
+                </thead>
+                <tbody>
+                   
+                        {% for entry in attendance_data %}
+                        <tr>
+                            <td class="text-center" >{{ entry.date }}</td>
+                            <td class="text-center" >{{ entry.status }}</td>
+                            <td class="text-center">
+                                <a href="{% url 'edit_attendance' attendance_id=entry.atid %}" class="btn btn-sm btn-info">Edit</a>
+                                <a href="{% url 'delete_attendance' attendance_id=entry.atid %}" class="btn btn-sm btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                </tbody>
+            </table>
+
+
+
+        </div>
+
+       
+</div>
+</div>
+
+<script>
+        function Calender() {
+            
+            document.getElementById('whatToPrint').style.display = 'none';
+            document.getElementById('calendar').style.display = 'block';
+            document.getElementById('overview').style.display = 'none';
+           
+            
+    }
+    function Template() {
+        document.getElementById('whatToPrint').style.display = 'block';
+        document.getElementById('calendar').style.display = 'none';
+        document.getElementById('overview').style.display = 'none';
+    }
+    function Overview() {
+        document.getElementById('whatToPrint').style.display = 'none';
+        document.getElementById('calendar').style.display = 'none';
+        document.getElementById('overview').style.display = 'block';
+    }
+    
+</script>
+
+        <script type="text/javascript">
+            $('.delete').click(function(e){
+                var result = confirm("Are you sure you want to delete this record? If you delete this, not retrive");
+
+                if(!result) {
+                    e.preventDefault();
+                }
+            });
+        </script>
+    
+
+   
+    <script>
+    function printSection(sectionId) {
+        var printContents = document.getElementById(sectionId).innerHTML;
+        var originalContents = document.body.innerHTML;
+    
+        document.body.innerHTML = printContents;
+    
+        window.print();
+    
+        document.body.innerHTML = originalContents;
+       
+        window.location.reload(); 
+
+    }
+    </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('attendance-calendar');
+        var events = [
+            // Add holidays as events
+            {% for holiday in holidays_data %}
+            {
+                title: "{{ holiday.name }}",
+                start: "{{ holiday.start_date|date:'Y-m-d' }}",
+                end: "{{ holiday.end_date|date:'Y-m-d' }}",
+                // color: 'red',  // Set a color for holidays
+                textColor: 'white'  // Set text color
+            },
+            {% endfor %}
+            // Add absent days as events
+            {% for entry in attendance_data %}
+            {
+                title: "Absent",
+                start: "{{ entry.date|date:'Y-m-d' }}",
+                color: 'blue',  // Set a color for absent days
+                textColor: 'white'  // Set text color
+            },
+            {% endfor %}
+        ];
+
+        // Determine the month and year of the events
+        var firstHoliday = new Date(events[0].start);
+        var lastHoliday = new Date(events[events.length - 1].end);
+        var initialDate = new Date(firstHoliday);
+        initialDate.setDate(1);
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            events: events,
+            initialView: 'dayGridMonth',
+            initialDate: initialDate
+        });
+        calendar.render();
+    });
+</script>
+
+
+
+
+
+{% endif %}
+{% endblock %}

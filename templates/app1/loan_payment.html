@@ -1,0 +1,102 @@
+{% extends 'app1/base.html' %}
+{% load static %}
+{% block body %}
+
+<div class="card radius-15 h-20 m-3">
+    <div class="row p-2">
+       
+            <div class="col-md-12">
+               <center>
+               <h2>  loan Payment</h2>
+            </center>
+            </div>
+            
+            
+            <hr style="width:95%">
+        
+    </div>
+</div>
+<div class="page-content">
+<div class="card radius-15 p-5 ">
+<form id="bankForm" method="post" action="{% url 'crt_loan_trans' loan_id_global %}">
+
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-5 p-2">PRINCIPAL AMOUNT</div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2">DATE</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5 p-2"> <input class="form-control bg-grey" type="text" name="principal" id="principal" value="">
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"><input type="date" name="date" class="form-control"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5 p-2">INTREST AMOUNT</div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2">TOTAL AMOUNT</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5 p-2"> <input class="form-control" type="text" name="interest" id="interest" value=""></div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"><input class="form-control" type="number" name="total" id="total" readonly></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5 p-2">PAID FROM</div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5 p-2"> <select   name="recieved" class="form-control  text-white" id="">
+            <option class="form-control bg-dark text-white" value="cash">CASH</option>
+            {% for i in bank %}
+            <option class="form-control bg-dark text-white" value="{{i.bankname}}">{{i.bankname}}</option>
+            {% endfor %}
+        </select>  </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"></div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-8 mt-3"></div>
+        <div class="col-md-2 mt-3">
+            <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="{% url 'loan' %}">Close</a>
+
+        </div>
+        <div class="col-md-2 mt-3">
+          <button type="submit" class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
+            Save Loan Account
+          </button>
+        </div>
+        <div class="col-md-1"></div>
+      </div>
+    
+</form>
+</div>
+</div>
+
+<script>
+    // Get references to input elements
+    const principalInput = document.getElementById('principal');
+    const interestInput = document.getElementById('interest');
+    const totalInput = document.getElementById('total');
+
+    // Add an event listener to calculate the total amount
+    principalInput.addEventListener('input', updateTotal);
+    interestInput.addEventListener('input', updateTotal);
+
+    function updateTotal() {
+        const principal = parseFloat(principalInput.value) || 0;
+        const interest = parseFloat(interestInput.value) || 0;
+        const total = principal + interest;
+        totalInput.value = total.toFixed(); // Display total with 2 decimal places
+    }
+</script>
+
+{% endblock %}

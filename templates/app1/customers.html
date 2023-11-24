@@ -1,0 +1,310 @@
+{% extends 'app1/base.html' %}
+{% block body %}
+
+
+    {% load static %}
+    {% if user.is_authenticated %}
+        <!-- <link rel="stylesheet" href="{% static 'assets/css/search.css' %}"/> -->
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+body{
+  background: #f2f2f2;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.search {
+  width: 100%;
+  position: relative;
+  display: flex;
+}
+
+.searchTerm {
+  width: 100%;
+  border: 3px solid #7690da;
+  border-right: none;
+  padding: 5px;
+  height: 36px;
+  border-radius: 5px 0 0 5px;
+  outline: none;
+  color: #9DBFAF;
+}
+
+.searchTerm:focus{
+  color:#7690da;
+}
+
+.searchButton {
+  width: 40px;
+  height: 36px;
+  border: 1px solid #7690da;
+  background:#7690da;
+  text-align: center;
+  color: #fff;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+/*Resize the wrap to see the search bar change!*/
+.wrap{
+  width: 40%;
+  /* position: absolute;
+  top: 50%;
+  left: 50%; */
+  /* transform: translate(-50%, -50%); */
+}
+.table-row{
+        cursor:pointer;
+}
+
+</style>
+<div class="page-content">
+    <div class="card radius-15">
+        <div class="card-body">
+            <div class="card-title">
+                <center><h2 class="mb-0">CUSTOMERS</h2></center>
+                <hr>
+                <div class="btn-group col-md-2" style="float: right;">
+                    <a class="btn btn-outline-info text-grey" onclick="ExportToExcel()">Export To Excel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card radius-15">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <input type="text" id="search" placeholder="Search..." class="form-control" autocomplete="off" 
+                                style="margin-top: 8px; background-color: #2f516f;color: white;">
+                </div>
+                <div class="col-md-2" style="width: 40%; margin-top: 8px;">
+                    <div class="dropdown">
+                        <button type="button" class="btn btn-outline-info dropdown-toggle text-grey fas fa-filter"
+                                data-toggle="dropdown"> Sort by
+                        </button>
+                        <div class="dropdown-menu" style="background-color: black;">
+                            <a class="dropdown-item" href="{% url 'gocustomers' %}"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >All</a>
+                            <a class="dropdown-item" onclick="sortTableName()"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Customer</a>
+                            <a class="dropdown-item" onclick="sortTableAmount()"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Amount</a>
+                            <!-- <a class="dropdown-item" href="{% url 'gocustomers_desc' %}"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Customer <icon class=" fas fa-arrow-up"></icon></a> -->
+                        </div> 
+                    </div>
+                </div>
+                <div class="col-md-3"></div>
+                <div class="col-md-1 mx-5" style="width: 40%; margin-top: 8px;">
+                    <div class="dropdown">
+                        <button type="button" class="btn btn-outline-info dropdown-toggle text-grey fas fa-filter"
+                                data-toggle="dropdown"> filter by
+                        </button>
+                        <div class="dropdown-menu" style="background-color: black;">
+                            <a class="dropdown-item" href="{% url 'gocustomers' %}"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >All</a>
+                            <a class="dropdown-item" href="{% url 'gocustomers1' %}"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Active</a>
+                            <a class="dropdown-item" href="{% url 'gocustomers2' %}"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;">Inactive</a>
+                                
+                        </div> 
+                    </div>
+                </div>
+                <div class="btn-group col-md-2">
+                    <a href="{% url 'goaddcust' %}" id="myBtn" class="btn btn-outline-info text-grey fa fa-plus" style="width: 40%; margin-top: 8px;" role="button"> Add Customer</a>
+                </div>
+            </div>
+            <div class="container-fluid">
+                <table class="table table-responsive-md mt-4 table-hover text-center" id="tbl_exporttable_to_xls">
+                    <thead>
+                        <tr>
+                            <th>CUSTOMER</th>
+                            <th>GST TYPE</th>
+                            <th>GSTIN</th>
+                            <th>EMAIL ID</th>
+                            <th>OPENING BALANCE</th>
+                            <th>STATUS</th>
+                            <th>BALANCE</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cust_table_body">
+                        {% for customer in customers %}
+                            {% if customer.cid_id == cmp1.cid %}
+                                <tr  class="table-row clickable-row text-center" data-href="customer_profile/{{ customer.customerid }}">
+                                    <td>{{ customer.firstname }} {{ customer.lastname }}</td>
+                                    <td>{{ customer.gsttype }}</td>
+                                    <td>{{ customer.gstin }}</td>
+                                    <td>{{ customer.email }}</td>
+                                    <td>{{customer.opening_balance}}</td>
+                                    <td>{{customer.status}}</td>
+                                    <td>{{customer.opening_balance}}</td>
+                                    <td style="display: none;">{{ customer.customerid }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+<!-- 
+<script>
+    item_table_rows = document.getElementById('cust_table_body').querySelectorAll('tr')
+    for(let i= 0; i<item_table_rows.length;i++){
+        name = item_table_rows[i].getElementsByTagName("td")[0].innerText
+        id = item_table_rows[i].getElementsByTagName("td")[7].innerText
+        $.ajax({
+            type: "GET",
+            url: "{% url 'balancedata' %}",
+            data: {
+                id: id,
+                name:name
+            },
+            success: function (response) {
+                final_bal=response.final_bal
+                item_table_rows[i].getElementsByTagName("td")[6].innerText = final_bal
+            }
+        });
+    }
+</script> -->
+
+<script>
+
+    $(document).ready(function() {
+        var $rows = $('.table tbody tr');
+        $('#search').keyup(function() {
+            var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+            $rows.show().filter(function() {
+                console.log($rows.show())
+
+                var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                console.log(text)
+                return !~text.indexOf(val);
+            }).hide();
+        });
+    });
+            
+            // Get the modal
+            // var modal = document.getElementById("myModal");
+
+            // // Get the button that opens the modal
+            // var btn = document.getElementById("myBtn");
+
+            // // Get the <span> element that closes the modal
+            // var span = document.getElementsByClassName("close")[0];
+
+            // // When the user clicks the button, open the modal
+            // btn.onclick = function () {
+            //     modal.style.display = "block";
+            // }
+
+            // // When the user clicks on <span> (x), close the modal
+            // span.onclick = function () {
+            //     modal.style.display = "none";
+            // }
+
+            // When the user clicks anywhere outside of the modal, close it
+    // window.onclick = function (event) {
+    //     if (event.target == modal) {
+    //         modal.style.display = "none";
+    //     }
+    // }
+
+    function ExportToExcel() {
+        // Assuming you have data in a table format, you can export it to Excel using SheetJS
+        const table = document.querySelector('#tbl_exporttable_to_xls');
+        const ws = XLSX.utils.table_to_sheet(table);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        XLSX.writeFile(wb, 'Customers.xlsx');
+    }
+</script>
+
+<script>
+    function sortTableName() {
+        var table, rows, switching, i, x, y, shouldSwitch;
+        table = document.getElementById("tbl_exporttable_to_xls");
+        switching = true;
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < rows.length - 1; i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("td")[0];
+                y = rows[i + 1].getElementsByTagName("td")[0];
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
+    }
+
+      function sortTableAmount() {
+        var table, rows, switching, i, x, y, shouldSwitch;
+        table = document.getElementById("tbl_exporttable_to_xls");
+        switching = true;
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < rows.length - 1; i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("td")[4];
+                y = rows[i + 1].getElementsByTagName("td")[4];
+                if (parseFloat(x.innerHTML) > parseFloat(y.innerHTML)) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
+    }
+</script>
+
+<script>
+    jQuery(document).ready(function($) {
+        $(".clickable-row").click(function() {
+        window.location = $(this).data("href");
+        });
+    });
+</script>
+
+<script>
+    // Get all the table cells in the second column
+    const cells1 = document.querySelectorAll('table tbody tr td:nth-child(5)');
+
+    // Iterate through the cells and convert negative values to positive
+    cells1.forEach(cell => {
+        const value = parseInt(cell.textContent);
+        if (value == 0) {
+            cell.textContent = Math.abs(value);
+        }
+    });
+</script>
+
+<script>
+    // Get all the table cells in the second column
+    const cells2 = document.querySelectorAll('table tbody tr td:nth-child(7)');
+
+    // Iterate through the cells and convert negative values to positive
+    cells2.forEach(cell => {
+        const value = parseInt(cell.textContent);
+        if (value == 0) {
+            cell.textContent = Math.abs(value);
+        }
+    });
+</script>
+
+{% endif %}
+{% endblock %}

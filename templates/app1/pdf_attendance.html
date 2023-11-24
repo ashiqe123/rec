@@ -1,0 +1,82 @@
+<!-- reshna-holidays -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fin sYs</title>
+   
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    
+    
+</head>
+<style>
+    
+    
+    .table
+    {
+        text-align: center;
+        padding-top: 6px;
+        font-size: 1.1em;
+        background-color:azure
+       
+    }
+    
+    .table-head
+    {
+        color: rgb(52, 49, 58);
+        
+       
+    }
+    .table .tbody tr 
+    {
+       margin-bottom: 3px;
+    }
+   
+    body{
+        font-size: 14px;
+    }
+   
+    
+</style>
+
+   
+    <div class="container-fluid" id="chart-container">
+        <div class="col-md-12 p-3">
+            <h4 style="color: #000000; text-align: center;">Attendance for {{ employee_attendance.month }} {{ employee_attendance.year }}</h4>
+            <p style="color: #000000; text-align: center;">Total Holidays: {{ employee_attendance.holidays }} | Working Days: {{ employee_attendance.working_days }}|
+                Absent Days: {{ employee_attendance.absent_days }}</p>
+        </div>
+    
+        <table class="table table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th class="text-center" style="color:#000">Date</th>
+                    <th class="text-center" style="color:#000">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in attendance_data %}
+                <tr>
+                    <td class="text-center" style="color:#000">{{ entry.date }}</td>
+                    <td class="text-center" style="color:#000">{{ entry.status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+    
+<body>
+
+
+                      
+    
+    
+</body>
+
+</html>

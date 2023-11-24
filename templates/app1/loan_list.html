@@ -1,0 +1,242 @@
+{% extends 'app1/base.html' %}
+{% load static %}
+{% block body %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<div class="page-content">
+    <div class="card radius-15 h-20 p-3">
+        <div class="row">
+           
+                <div class="col-md-9">
+                    <h1  style="margin-left: 400px;">TRANSACTION</h1>
+                </div>
+                
+                <div class="col-md-3 mt-4">
+                    
+                    <!-- <h6 class="mt-1"> BALANCE : <span style="font-size: x-large;">{{loan.balance}}</span></h6> -->
+                    
+                        <button type="button" class="btn btn-outline-info dropdown-toggle text-grey" >
+                            <a href="{% url 'loan_trans' loan_id_global  %}">Make Payment</a>
+                        </button>
+                        
+                   
+                    
+                        <button type="button" class="btn btn-outline-info text-grey" ><a href="{% url 'loan_statement' loan_id_global  %}">STATEMENT</a>
+                            </button>
+                      
+                </div>
+                
+                <hr style="width:95%">
+            
+        </div>
+    </div>
+   
+    
+<div class="card radius-15">
+    <div class="card-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="search-bar">
+                    <div class="input-group">
+                        <div class="input-group-prepend search-arrow-back">
+                            <button class="btn btn-search-back" type="button"><i class="bx bx-arrow-back"></i></button>
+                        </div>
+                        <input class="form-control" type="search" id="searchInput" placeholder="Search" aria-label="Search">
+                        <div class="input-group-append">
+                            <button class="btn btn-search" type="button"><i class="lni lni-search-alt"></i></button>
+                        </div>
+                       
+                
+                            </div>
+                        </div>
+                <div class="col"></div>
+                <div class="col"><h6 class="mt-1" style="margin-left: 200px;"> BALANCE : <span style="font-size: x-large;">{{loan.balance}}</span></h6></div>
+                  
+                  
+            
+                  </div>
+                </div>
+              </div>
+              <!-- <h3 class="ml-5">All Transactions</h3> -->
+              <div class="ml-5"><h5>NAME : <span style="font-size: large;">{{loan.account_name}}</span></h5>
+                <h5> ACCOUNT NUMBER : <span style="font-size: large;">{{loan.account_number}}</span></h5>
+                <h5>RECIEVED BANK :<span style="font-size: large;">{{loan.recieced_bank}}</span> </h5></div>
+            <div class="table-responsive">
+                <table class="table table-responsive-md table-hover mt-4" id="tabletobe">
+                    <thead>
+                    <tr>
+                       <!-- Inside the <thead> section of your table -->
+                        <th>
+                
+                            <h6 class="e text-grey" ><b>DATE</b>
+                            </h6>
+                            
+                        
+                    </th>       
+                        <th>
+                            <div class="dropdown">
+                                <h6 ><b>TYPE</b></h6>
+                                <div class="dropdown-menu mt-5" style="background-color: black;z-index: 1;">
+                                   
+
+
+                                    <!-- Add more options as needed -->
+                                </div>
+                            </div>
+                        </th>
+                        <!-- Inside the <thead> section of your table -->
+            <!-- <th>
+                
+                    <h6 class=" text-grey" ><b>NAME</b>
+                    </h6>
+                    
+                
+            </th> -->
+
+                          
+            <th><h6><b>AMOUNT</b></h6></th>
+            <th><h6><b>INTEREST</b></h6></th>
+            <th><h6><b>TOTAL AMOUNT</b></h6></th>
+            <th><h6><b>ACTION</b></h6></th>
+            <th style="display:none;"><h6><b><td></td></b></h6></th>
+                        
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for a in loan_tr %}
+                <tr >              
+                    <td >{{ a.loan_date }}</td>
+                    {% if a.bank_type == 'PROCESSING FEE' %}
+                                <td >{{ a.bank_type }}</td>
+                                {% elif a.bank_type == 'OPENING BAL' %}
+                                <td >{{ a.bank_type }}</td>
+                                {% elif a.bank_type == 'EMI PAID' %}
+                                <td >{{ a.bank_type }}</td>
+                                {% endif %}
+                                <!-- <td >{{ a.loan_desc }}</td> -->
+                                
+                                
+                                
+                                <td>{{a.loan_amount}}</td>
+                                <td>{{a.loan_intrest}}</td>
+                                <td>{{a.total}}</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                        <div class="dropdown-menu">
+                                            {% if a.bank_type == 'PROCESSING FEE' or a.bank_type == 'OPENING BAL' %}
+                                                <a class="dropdown-item" href="#" onclick="showAlert('{{ a.bank_type }}')">Edit</a>
+                                            {% else %}
+                                                <a class="dropdown-item" href="{% url 'edit_transaction' a.id %}">Edit</a>
+                                            {% endif %}
+
+                                            {% if a.bank_type == 'PROCESSING FEE' or a.bank_type == 'OPENING BAL' %}
+                                                <a class="dropdown-item" href="#" onclick="shoAlert('{{ a.bank_type }}')">Deleet</a>
+                                            {% else %}
+                                            <a class="dropdown-item delete-item" href="{% url 'delete_loan_payment' a.id %}">Delete</a>
+                                            {% endif %}
+                                            
+                                        </div>
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                              
+                            <script>
+                                function showAlert(bankType) {
+                                    alert("You can't edit this transaction with bank type: " + bankType);
+                                }
+
+                                function shoAlert(bankType) {
+                                    alert("You can't delete this transaction with bank type: " + bankType);
+                                }
+                            </script>         
+{% endfor %}
+</tbody>
+                       
+
+
+    
+<script>
+    jQuery(document).ready(function($) {
+        $(".clickable-row").click(function() {
+            window.location = $(this).data("href");
+        });
+    });
+</script>
+<script>
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("myBtn");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks the button, open the modal
+    btn.onclick = function () {
+        modal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+
+
+
+     <script>
+        function namefilter() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("namefilt");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("tabletobe");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+<script>
+    // Get the input element and table rows
+    const searchInput = document.getElementById('searchInput');
+    const tableRows = document.querySelectorAll('#tabletobe tbody tr ');
+
+    // Add an event listener to the search input
+    searchInput.addEventListener('input', function () {
+        const searchText = this.value.toLowerCase();
+
+        // Loop through each table row and hide/show based on search text
+        tableRows.forEach(row => {
+            const nameCell = row.querySelector('td:nth-child(2)');
+            const name = nameCell.textContent.toLowerCase();
+            if (name.includes(searchText)) {
+                row.style.display = 'table-row';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+
+
+{% endblock %}
+

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fin sYs</title>
+   
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    
+    
+</head>
+<style>
+    
+    
+    .table2
+    {
+        text-align: center;
+        padding-top: 6px;
+        font-size: 1.1em;
+        background-color:azure
+       
+    }
+    
+    .table-head
+    {
+        color: rgb(52, 49, 58);
+        
+       
+    }
+    .table2 .tbody tr 
+    {
+       margin-bottom: 3px;
+    }
+    .table3{
+        width:75px;
+        text-align: right;
+        font-size: 14px;
+    }
+    body{
+        font-size: 14px;
+    }
+    
+</style>
+<body>
+
+    <div class="my-5 page" size="A4" >
+        <div class="p-5">
+            <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
+                <div class="ribbon-inner ribbon-open"><!----></div></div>
+            <section class="top-content bb d-flex justify-content-between">
+                <div class="logo">
+                    <!-- <img src="logo.png" alt="" class="img-fluid"> -->
+                </div>
+                <div class="row">
+                    <table>
+                        <th>
+                            <div class="col-6">
+                                <p>STATEMENT</p>
+                            </div>
+                        </th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>
+                            <div class="col-6">
+                                {{employee.status}}
+                                <p>Employee ID. <span>{{employee.employee.employeeno }}</span></p>
+
+                            </div>
+                        </th>
+                    </table>
+                    
+                </div>
+                <div class="row">
+
+                </div>
+                 </section>
+                 <br><br><br>
+                
+            </section>
+
+            <section class="store-user mt-5 mb-5">
+                <div class="container">
+                    <div class="row">
+                        <table>
+                            <th>
+                                <div class="col-6">
+                                    <p>FROM</p>
+                                    <p>{{cmp1.cname }}</p>
+                                    <p>{{cmp1.caddress}}<br>
+                                        {{cmp1.city}},
+                                        {{cmp1.state}}<br>
+                                        {{cmp1.pincode}}<br>
+                                    </p>
+                                </div>
+                            </th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th>
+                                <div class="col-6">
+                                    <p>To,<br>
+                                        {{employee.employee.firstname}}
+                                        {{employee.employee.lastname}}<br>
+                                        {{employee.employee.street}},{{employee.employee.city}}<br>
+                                        {{employee.employee.state}},{{employee.employee.country}}<br>
+                                        {{employee.employee.pincode}}<br>
+                                        {{employee.employee.email}}<br>
+                                        {{employee.employee.phone}}<br>
+                                    </p>
+                                </div>
+                            </th>
+                        </table>
+                        
+                    </div>
+                </div>
+                
+            </section>
+            <section>
+           <div class="row">
+
+           </div>
+            </section>
+            <br><br><br>
+            <section class="product-area mt-5">
+                <table class="table table-hover mt-5">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; text-transform: uppercase;">Loan Date</th>
+             
+                            <th style="text-align: center; text-transform: uppercase;">Particular</th>
+                            <th style="text-align: center; text-transform: uppercase;">Amount</th>
+                            <th style="text-align: center; text-transform: uppercase;">Intrest</th>
+                            <th style="text-align: center; text-transform: uppercase;">Total Amount</th>
+                            <th style="text-align: center; text-transform: uppercase;">Balance</th>
+                   
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in loan_trans %}
+                        <tr class="table-row ">
+                            <td  style="text-align: center;color:black;">{{i.loan_trans_date}}</td>
+                            <td  style="text-align: center;color:black;">{{i.particular}}</td>
+                            <td  style="text-align: center;color:black;">{{i.amount}}</td>
+                            <td  style="text-align: center;color:black;">{{i.intrest}}</td>
+                            <td  style="text-align: center;color:black;">{{i.total_amount}}</td>
+                            <td  style="text-align: center;color:black;">{{i.balance_loan}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+
+          
+
+            <!-- Cart BG -->
+            <img src="cart.jpg" class="img-fluid cart-bg" alt="">
+
+            <!-- <footer>
+                <hr>
+                <p class="m-0 text-center">
+                    View THis Invoice Online At - <a href="#!"> invoice/saburbd.com/#868 </a>
+                </p>
+                <div class="social pt-3">
+                    <span class="pr-2">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>0123456789</span>
+                    </span>
+                    <span class="pr-2">
+                        <i class="fas fa-envelope"></i>
+                        <span>me@saburali.com</span>
+                    </span>
+                    <span class="pr-2">
+                        <i class="fab fa-facebook-f"></i>
+                        <span>/sabur.7264</span>
+                    </span>
+                    <span class="pr-2">
+                        <i class="fab fa-youtube"></i>
+                        <span>/abdussabur</span>
+                    </span>
+                    <span class="pr-2">
+                        <i class="fab fa-github"></i>
+                        <span>/example</span>
+                    </span>
+                </div>
+            </footer> -->
+        </div>
+    </div>
+    
+    
+</body>
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script> 
+
+$(document).ready(function(){
+    pstate = $("#sply").html().trim();
+    cmpstate = $("#cmp").html().trim();
+    // console.log(pstate == cmpstate);
+    if(pstate == cmpstate){
+
+        $('#igstrow').hide();
+        $('#sgstrow').show();
+        $('#cgstrow').show();
+        
+
+        $("#sgst").html($("#igst").html()/2);
+        $("#cgst").html($("#igst").html()/2);
+
+      
+    }
+    else{
+       
+
+        $('#igstrow').show();
+        $('#sgstrow').hide();
+        $('#cgstrow').hide();
+    }
+});
+
+</script>
+
+</html>

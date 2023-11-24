@@ -1,0 +1,202 @@
+{% extends 'app1/base.html' %}
+{% block body %}
+{% load static %}
+
+
+<style>
+    .search {
+        width: 100%;
+        position: relative;
+        display: flex;
+    }
+
+    .searchTerm {
+        width: 100%;
+        border: 3px solid #7690da;
+        border-right: none;
+        padding: 5px;
+        height: 36px;
+        border-radius: 5px 0 0 5px;
+        outline: none;
+        color: #9DBFAF;
+    }
+
+    .searchTerm:focus{
+        color:#7690da;
+    }
+
+    .searchButton {
+        width: 40px;
+        height: 36px;
+        border: 1px solid #7690da;
+        background:#7690da;
+        text-align: center;
+        color: #fff;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        font-size: 20px;
+    }
+
+    tbody{
+        cursor: pointer;
+    }
+
+</style>
+
+    <div class="page-content">
+        <div class="card radius-15">
+            <div class="card-body">
+                <div class="card-title">
+                    <center><h2 class="mb-0">INVOICES</h2></center>
+                    <hr>
+                    <div class="btn-group col-md-2" style="float: right;">
+                        <a class="btn btn-outline-info text-grey" onclick="ExportToExcel()">Export To Excel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card radius-15">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <input type="text" id="search" placeholder="Search..." class="form-control" autocomplete="off" 
+                        style="margin-top: 8px; background-color: #2f516f;color: white;">
+                    </div>
+                    <div class="col-md-2" style="width: 40%; margin-top: 9px;">
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-outline-info   text-grey dropdown-toggle"
+                                    data-toggle="dropdown"> Sort by
+                            </button>
+                            <div class="dropdown-menu " style="background-color: black;">
+                                <a class="dropdown-item" href="{% url 'goinvoices' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >All</a>
+                            <a class="dropdown-item" onclick="sortTableName(1)"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Invoice Number </a>
+
+                            <a class="dropdown-item  " onclick="sortTableName(2)"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Customer Name </a>  
+                            </div> 
+                        </div>
+                    </div>
+                    <div class="col-md-3"></div>
+
+                    <div class="col-md-2 " style="width: 40%; margin-top: 8px;">
+
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-outline-info dropdown-toggle text-grey float-right ml-5"
+                                    data-toggle="dropdown"> filter by
+                            </button>
+                            <div class="dropdown-menu" style="background-color: black;">
+                                <a class="dropdown-item" href="{% url 'goinvoices' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >All</a>
+                                <a class="dropdown-item" href="{% url 'goinvoices1' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Draft</a>
+                                <a class="dropdown-item" href="{% url 'goinvoices2' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;">Approved</a>
+                                <!-- <a class="dropdown-item" href="{% url 'sale_filter3' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;">Invoice</a> -->
+                                
+                            </div> 
+                        </div>
+                    </div>
+                    <div class="col-md-2" >
+                        <a href="{% url 'goaddinvoices' %}" >
+                            <button id="myBtn" class="btn btn-outline-info text-grey ml-4" style="margin-top: 8px;"> <i class="fa fa-plus"></i>&nbsp; &nbsp;Add
+                                Invoices</button>
+                        </a>
+                    </div>
+
+                </div>
+                <table class="table table-responsive-md mt-3 table-hover" id="table">
+                    <thead>
+                        <tr>
+                            
+                            <th style="text-align: center;  ">INVOICE DATE</th>
+                            <th style="text-align: center;">INVOICE NO</th>
+                            <th style="text-align: center;">CUSTOMER NAME</th>
+                            <th style="text-align: center;">CUSTOMER MAIL</th>
+                            <th style="text-align: center;">TOTAL</th>
+                            <th style="text-align: center;">STATUS</th>
+                            <th style="text-align: center;">BALANCE</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for invoices in invoice %}
+                            {% if invoices.cid_id == cmp1.cid %}
+
+                                <tr  class="table-row ">
+                                    <td class="clickable-row" style="text-align: center;" data-href="invoice_view/{{ invoices.invoiceid }}">{{ invoices.invoicedate | date:'d-m-Y'}}</td>
+                                    <td class="clickable-row" style="text-align: center;" data-href="invoice_view/{{ invoices.invoiceid }}">{{ invoices.invoiceno }}</td>
+                                    <td class="clickable-row" style="text-align: center;" data-href="invoice_view/{{ invoices.invoiceid }}">{{ invoices.cust }}</td>
+                                    <td class="clickable-row" style="text-align: center;" data-href="invoice_view/{{ invoices.invoiceid }}">{{ invoices.email }}</td>
+                                    <td class="clickable-row" style="text-align: center;" data-href="invoice_view/{{ invoices.invoiceid }}">{{ invoices.grandtotal }}</td>
+                                    <td class="clickable-row" style="text-align: center;" data-href="invoice_view/{{ invoices.invoiceid }}">{{ invoices.status }}</td>
+                                    <td class="clickable-row" style="text-align: center;" data-href="invoice_view/{{ invoices.invoiceid }}">{{ invoices.baldue }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+ 
+        </div>
+    </div>
+    <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+    <script>
+        
+        $(document).ready(function() {
+            var $rows = $('.table tbody tr');
+            $('#search').keyup(function() {
+                var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+                $rows.show().filter(function() {
+                    console.log($rows.show())
+
+                    var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                    console.log(text)
+                    return !~text.indexOf(val);
+                }).hide();
+            });
+        });
+
+        function ExportToExcel() {
+            const table = document.querySelector('#table');
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+            XLSX.writeFile(wb, 'Invoice.xlsx');
+        }
+
+        function sortTableName(row_no) {
+            var table, rows, switching, i, x, y, shouldSwitch;
+            table = document.getElementById("table");
+            switching = true;
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < rows.length - 1; i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("td")[row_no];
+                    y = rows[i + 1].getElementsByTagName("td")[row_no];
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                }
+            }
+        }
+
+        jQuery(document).ready(function($) {
+            $(".clickable-row").click(function() {
+            window.location = $(this).data("href");
+            });
+        });
+    </script>
+{% endblock %}
+
+

@@ -1,0 +1,376 @@
+{% extends 'app1/base.html' %}
+{% load static %}
+{% block body %}
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://cdn.jsdelivr.net/npm/table2excel@1.0.4/dist/table2excel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<script>
+    // Parse the JSON data from the Django view
+    const start_date_labels = JSON.parse('{{ start_date_labels|escapejs }}');
+    const total_amount_values = JSON.parse('{{ total_amount_values|escapejs }}');
+    
+    let chartVisible = false;
+
+    function toggleGraph() {
+        const chart = document.getElementById('myChart');
+        const pageContent = document.getElementById('pageContent');
+        chart.style.display = chartVisible ? 'none' : 'block';
+        pageContent.style.display = chartVisible ? 'block' : 'none';
+        chartVisible = !chartVisible;
+    }
+
+    // Initialize the chart when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        new Chart("myChart", {
+            type: "line",
+            data: {
+                labels: start_date_labels,
+                datasets: [{
+                    label: 'Total Amount',
+                    data: total_amount_values,
+                    fill: false,
+                    borderColor: 'rgba(0, 0, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day',
+                            parser: 'YYYY-MM-DD'  // Date format should match the one used in the view
+                        },
+                        title: {
+                            display: true,
+                            text: 'Start Date'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Total Amount'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+
+<div class="card radius-15 h-20">
+    <div class="row">
+        <div class="col-md-12">
+            <center><h2 class="mt-3">SALES REPORT</h2></center>
+            
+            <hr style="width:95%">
+        </div>
+    </div>
+    <div class="row container-fluid">
+        <!-- Left-aligned div -->
+        <div class="col-md-6">
+            <div class="container-fluid m-3 form-inline">
+                <form method='POST'>
+                    {% csrf_token %}
+                    <input class="form-control" type="date" id="start_date" name='sdate' value="{{ today_date }}">
+                    <span class="ml-2 mr-2 mt-2"> TO </span>
+                    <input class="form-control" type="date" id="end_date" name='edate' value="{{ today_date }}">
+                    <input class=" form-control btn-btn warning" type="submit" value='View'>
+                   </form>
+            </div>
+        </div>
+        
+        <script>
+            function filterDataByDate() {
+                const startDate = document.getElementById('start_date').value;
+                const endDate = document.getElementById('end_date').value;
+                
+            }
+        </script>
+        <!-- Right-aligned div -->
+        <!-- Right-aligned div -->
+        <div class="col-md-6 mt-2 text-right">
+            <button class="btn btn-secondary btn-outline-white ml-2">
+                <i class="fa fa-bar-chart-o " style="font-size:26px" title="Graph" onclick="toggleGraph()"></i>
+            </button>
+            <button class="btn btn-secondary btn-outline-white ml-2">
+                <a href="#" id="exportToExcel">
+                    <i class="fa fa-file-excel-o" style="font-size:26px" title="Export to Excel"></i>
+                </a>
+            </button>
+            <button  class="btn btn-secondary btn-outline-white ml-2">
+                <a   onclick="printSpecificArea()" ><i class="fa fa-print" style="font-size:26px" title="print"></i></a>
+
+            </button>
+    
+            
+            
+           
+            
+                </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <canvas id="myChart" style="width: 100%; height: 100%; display: none; background-color: aliceblue;"></canvas>
+</div>
+
+<div class="page-content" id="pageContent">
+    
+   
+    
+    <div class="row mt-3">
+        <div class="col-md-2">
+            <div class="card">
+                <div class="card-body">
+                    <p>Recieved amount</p>
+                    <h1>0.00</h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+             <div class="card">
+                <div class="card-body">
+                    <p>Pending amount</p>
+                    <h1>0.00</h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+             <div class="card">
+                <div class="card-body">
+                    <p>Total amount</p>
+                    <h1>0.00</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3" >
+           
+        </div>
+    </div>
+    <div class="row">
+        <div class="container-fluid">
+            <h3>Transactions</h3> <br>
+        </div>
+    </div>
+    <div class="row">
+        
+        <div class="col-md-4">
+            <div class="search-bar">
+                <div class="input-group">
+                    <div class="input-group-prepend search-arrow-back">
+                        <button class="btn btn-search-back" type="button"><i class="bx bx-arrow-back"></i></button>
+                    </div>
+                    <input class="form-control" type="search" id="searchInput" placeholder="Search" aria-label="Search">
+                    <div class="input-group-append">
+                        <button class="btn btn-search" type="button"><i class="lni lni-search-alt"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            
+        </div>
+        <div class="col-md-2">
+        </div>
+    </div>
+    
+    <div class="row">
+        <script>
+            function printSpecificArea() {
+                var printContents = document.getElementById("whatToPrint").innerHTML;
+                var originalContents = document.body.innerHTML;
+                
+                document.body.innerHTML = printContents;
+                window.print();
+                
+                document.body.innerHTML = originalContents;
+            }
+            </script>
+           
+
+            
+        <div id="whatToPrint" style="width: 100%;">
+            <style>
+    
+                
+                .store-user {
+                    padding-bottom: 25px;
+                }
+                .store-user p {
+                    margin: 0;
+                    font-weight: 600;
+                    color: #000000;
+                }
+                .store-user .address {
+                    font-weight: 400;
+                }
+                .store-user h5 {
+                    color: var(--themeColor);
+                    font-family: 'Rajdhani', sans-serif;
+                }
+                .extra-info p span {
+                    font-weight: 400;
+                
+                }
+
+
+                .table td,
+                .table th,
+                .store-user,
+                .page {
+                 
+                    background-color: #ffffff;
+                    color: black;
+                }
+                tr th:first-child,
+                tr td:first-child {
+                    text-align: left;
+                }
+                
+                
+                table.table-bordered{
+                    color: 1px solid #000;
+                }
+            
+           
+               /* Default styles for larger screens */
+             
+
+                /* Media query for screens with a maximum width of 768px (responsive view) */
+                @media (max-width: 768px) {
+                    .my-5.page {
+                        width: 100%; /* Set the width to 100% for smaller screens (responsive view) */
+                    }
+                }
+
+            </style>
+        <div class="my-5 page" size="A4"  >
+            <div class="">
+                
+               
+    
+                
+                
+                <section class="store-user mt-5">
+                    <div class="col-12">
+                        <div class="row bb pb-3">
+                            
+                            <div class="col-6">
+                                <h5>{{cmp1.cname }}</h5>
+                                <p class="address "> {{cmp1.caddress}}<br>
+                                    {{cmp1.city}},
+                                    {{cmp1.state}}<br>
+                                    {{cmp1.pincode}}<br>
+                                    {{cmp1.email}}<br>
+                                </p>  
+                            </div>
+                            <dic class="col-6 mt-5 mr-5">
+                                <h3 class="text-dark">SALES REPORT</h3>
+                            </dic>
+                      
+                        </div>
+                        
+                    </div>
+                </section>
+    
+               
+                <section class="product-area mt-2">
+                    <table class="table table-responsive-md table-hover mt-2 print-content" id="tabletobe">
+                        <thead class="mt-2">
+                            <tr>
+                                <th>S NO</th>
+                                <th>NAME</th>
+                                <th>INVOICE</th>
+                                <th>DATE</th>
+                                <th>TRANSACTION</th>
+                                <th>AMOUNT</th>
+                                <th>BALANCE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in all_data %}
+                            <tr>
+                                <td class="serial-number"></td>
+                                <td>{{ i.customername }}{{i.customer}}</td>
+                                <td>{{i.credit_no}} {{i.recinvoiceno}} {{i.invoiceno}}</td>
+                                <td>{{ i.invoicedate }}{{i.creditdate}} {{i.startdate}}</td>
+                                <td>{{ i.status }}</td>
+                                <td>{{ i.grandtotal }}</td>
+                                <td>{{ i.baldue }}</td>
+                                
+                            </tr>
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function() {
+                // Get all the table rows
+                                var rows = document.querySelectorAll("#tabletobe tbody tr");
+                
+                // Loop through the rows and set the serial number
+                                for (var i = 0; i < rows.length; i++) {
+                                    rows[i].querySelector(".serial-number").textContent = i + 1;
+                }
+            });
+                            </script>
+                            {% endfor %}
+                            <script>
+                                document.getElementById('exportToExcel').addEventListener('click', function (e) {
+                                    e.preventDefault(); // Prevent the default link behavior
+                                    var table2excel = new Table2Excel();
+                                    table2excel.export(document.querySelectorAll("#tabletobe"));
+                                    
+                                });
+                            </script>
+                                       <script>
+                                        // Get the input element and table rows
+                                        const searchInput = document.getElementById('searchInput');
+                                        const tableRows = document.querySelectorAll('#tabletobe tbody tr');
+                                    
+                                        // Add an event listener to the search input
+                                        searchInput.addEventListener('input', function () {
+                                            const searchText = this.value.toLowerCase();
+                                    
+                                            // Loop through each table row and hide/show based on search text
+                                            tableRows.forEach(row => {
+                                                let foundMatch = false;
+                                                const cells = row.querySelectorAll('td'); // Select all <td> elements within the row
+                                    
+                                                cells.forEach(cell => {
+                                                    const cellText = cell.textContent.toLowerCase();
+                                                    if (cellText.includes(searchText)) {
+                                                        foundMatch = true;
+                                                    }
+                                                });
+                                    
+                                                // Show or hide the row based on whether a match was found
+                                                if (foundMatch) {
+                                                    row.style.display = 'table-row';
+                                                } else {
+                                                    row.style.display = 'none';
+                                                }
+                                            });
+                                        });
+                                    </script>
+                        </tbody>
+                    </table>
+                
+                </section>
+    
+
+                <img src="cart.jpg" class="img-fluid cart-bg" alt="">   
+            </div>
+        </div>
+</div>
+
+       
+    </div>
+
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,1293 @@
+{% extends 'app1/base.html' %}
+{% block body %}
+    {% load static %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://unpkg.com/html2pdf.js"></script>
+
+    
+    <style>
+       
+        .card-registration .select-input.form-control[readonly]:not([disabled]) {
+            font-size: 1rem;
+            line-height: 2.15;
+            padding-left: .75em;
+            padding-right: .75em;
+        }
+        .card-registration .select-arrow {
+            top: 13px;
+        }
+        .bg-grey {
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 0 10px 0 10px;
+
+        }
+        /* @media (min-width: 992px) {
+            .card-registration-2 .bg-grey {
+                border-top-right-radius: 16px;
+                border-bottom-right-radius: 16px;
+            }
+        }
+        @media (max-width: 991px) {
+            .card-registration-2 .bg-grey {
+                border-bottom-left-radius: 16px;
+                border-bottom-right-radius: 16px;
+            }
+        } */
+        .vl {
+            border-left: 6px solid gray;
+        }
+        .table-row{
+            cursor:pointer;
+        }
+        .spaced>li {
+            color:black;
+            font-size:10px;
+        }
+        .table1{
+            font-size:10px;
+            width:100% ;
+            color:black;
+        }
+        .label-lg {
+            padding: .3em .6em .4em;
+            font-size: 12px;
+            color:black;
+            line-height: 1.1;
+            height: 24px
+        }
+        .widget-header{
+            background-color:#444;
+            color:white;
+            font-size:20px;
+        }
+        .widget-header:after,
+        .widget-header:before {
+            content: "";
+            display: table;
+            line-height: 0
+        }
+        .widget-header:after {
+            clear: right
+        }
+        .widget-box.collapsed>.widget-header {
+            border-bottom-width: 0
+        }
+        .collapsed.fullscreen>.widget-header {
+            border-bottom-width: 1px
+        }
+        .collapsed>.widget-body {
+            display: none
+        }
+        .widget-header-flat {
+            background: #F7F7F7
+        }
+        .widget-header-large {
+            min-height: 49px;
+            padding-left: 18px
+        }
+        .widget-header-small {
+            min-height: 31px;
+            padding-left: 10px
+        }
+        .widget-header>.widget-title {
+            line-height: 36px;
+            padding: 0;
+            margin: 0;
+            display: inline;
+            font-size:13px;
+        }
+        .widget-toolbar {
+            display: inline-block;
+            padding: 0 10px;
+            line-height: 37px;
+            /* float: right; */
+            position: relative;
+        }
+        .widget-body {
+            background-color: #FFF
+        }
+        .widget-main {
+            padding: 12px
+        }
+        .ed:hover{
+            background-color: rgba(255, 255, 255,0.2);
+        }
+        .tr:hover{
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        
+        .head:hover{
+            background-color: rgba(131, 131, 131, 0.3);
+        }
+        .new{
+            color: #fff;
+        }
+        .new:hover{
+            color: rgba(255, 255, 255,0.4);
+        }
+        #runreport{
+            border: 1px solid white;
+            border-radius: 5px;
+        }
+        
+        
+    </style>
+
+    <div class="page-content">
+        <div class="card radius-15">
+            <div class="card-body">
+                <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgba(0,0,0,.001);">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                      <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse tab" id="navbarSupportedContent">
+                        <ul class="navbar-nav mr-auto">
+                            <li class="nav-item">
+                                <a class="nav-link btn " role="button" onclick="Details()" style="color: white;"><i class="fa fa-info-circle" style="font-size: large;">&nbsp;Details</i><span class="sr-only">(current)</span></a>
+                            </li>
+                            
+                            <li class="nav-item">
+                                <a class="nav-link btn " role="button" onclick="transaction()" style="color: white;"><i class="fa fa-stack-exchange" style="font-size: large;">&nbsp;Transactions</i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link btn " role="button" onclick="Statment()" style="color: white;"><i class="fa fa-tasks" style="font-size: large;">&nbsp;Statement</i></a>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav navbar-right">
+                            
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-outline-info btn-sm" role="button" style="color: white;" data-toggle="modal" data-target="#commentModal">
+                                    <i class="fa fa-comment" style="font-size: medium;">&nbsp;Comment</i>
+                                </a>
+                            </li>                            
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-outline-info btn-sm mx-1"  role="button" onclick="generatePDF()"  style="color: white;">
+                                    <i class="fa fa-file" style="font-size: medium;" >&nbsp;Pdf</i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-outline-info btn-sm mx-1"  role="button" onclick="printDiv()"  style="color: white;">
+                                    <i class="fa fa-print" style="font-size: medium;" >&nbsp;Print</i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-outline-info btn-sm  mx-1" role="button" href="{% url 'goeditvendor' vndr.vendorid %}" style="color: white;">
+                                    <i class="fa fa-edit" style="font-size: medium;">&nbsp;Edit</i>
+                                </a>
+                            </li>
+
+                            
+                            
+                            {% if vndr.is_active %}
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-outline-info btn-sm " role="button" href="{% url 'inactivate_vendor' vndr.vendorid %}" style="color: white;">
+                                    <i class="fa fa-check-circle" style="font-size: medium;">&nbsp;Active</i>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-outline-info btn-sm" role="button" href="{% url 'activate_vendor' vndr.vendorid %}" style="color: white;">
+                                    <i class="fa fa-times-circle" style="font-size: medium;">&nbsp;Inactive</i>
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-outline-info btn-sm mx-1 delete" role="button" href="{% url 'deletevendor' vndr.vendorid %}" style="color: white;">
+                                    <i class="fa fa-trash-o" style="font-size: medium;">&nbsp;Delete</i>
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light btn btn-outline-info btn-sm" href="#" id="navbarDropdown" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-file" style="font-size: medium;"> File</i>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" data-toggle="modal" data-target="#attachModal"><i class="fa fa-paperclip">&nbsp;Attach File</i></a>
+                                    {% if vndr.attachment %}
+                                        <a class="dropdown-item" download  href="{{vndr.attachment.url }}"><i class="fa fa-download">&nbsp;Download File</i></a>
+                                    {% endif %}
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <div  class="card card-registration card-registration-2 " style="border-radius: 15px;">
+            <div id="whatToPrint"  class="card-body p-0 ">
+                <div id="details">
+                    <div class="row g-0">
+                        <div class="col-lg-8">
+                            <div class="p-5">
+                                <div class="d-flex justify-content-between align-items-center mb-5 shadow p-3  bg-body-tertiary rounded">
+                                    <h3 class="fw-bold mb-0 text-black"><b>{{ vndr.firstname }} {{ vndr.lastname }}</b></h3>
+                                    <h6 class="mb-0" style="font-family:'Times New Roman', Times, serif;"><b>{{ cmp1.cname }}</b></h6>
+                                </div>
+                                <!-- <hr class="my-4"> -->
+                                <div class="row mb-4 mt-5 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <p class="mb-0">Company</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0 bold" style="font-family: monospace;"><b>{{ vndr.companyname }}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <p class="mb-0">Email</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ vndr.email }}</b></h6>
+                                    </div>
+                                </div>
+                                <div class="row mb-4  d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <p class="mb-0">Mobile</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ vndr.mobile }}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <p class="mb-0">Website</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ vndr.website }}</b></h6>
+                                    </div>
+                                </div>
+                                <div class="row mb-5  d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <p class="mb-0">Status</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        {% if vndr.is_active %}  
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>Active</b></h6>
+                                        {% else %}
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>Inactive</b></h6>
+                                        {% endif %}
+
+                                    </div>
+                                    <div class="col-md-2 mt-3"></div>
+                                    <div class="col-md-4 mt-3"></div>
+                                    
+                                </div>
+                                <hr class="my-4">
+                                <div class="row mb-4  mt-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-4 mt-2">
+                                        <h6 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;"><b>Billing Address</b></h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3"></div>
+                                    <div class="col-md-4 mt-3"></div>
+    
+                                    <div class="col-md-2 mt-5">
+                                        <p class="mb-0">Street</p>
+                                    </div>
+                                    <div class="col-md-4 mt-5">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ vndr.street }}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-5 vl">
+                                        <p class="mb-0">City</p>
+                                    </div>
+                                    <div class="col-md-4 mt-5">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ vndr.city }}</b></h6>
+                                    </div>
+                                </div>
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <p class="mb-0">State</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ vndr.state }}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <p class="mb-0">Pincode</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ vndr.pincode }}</b></h6>
+                                    </div>
+                                    
+                                </div>
+                                <div class="row mb-5 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <p class="mb-0">Country</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ vndr.country }}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-3">
+                                        
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        
+                                    </div>
+
+                                </div>
+                                <hr>
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-4 mt-2">
+                                        <h6 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;"><b>Shipping Address</b></h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3"></div>
+                                    <div class="col-md-4 mt-3"></div>
+    
+                                    <div class="col-md-2 mt-5">
+                                        <p class="mb-0">Street</p>
+                                    </div>
+                                    <div class="col-md-4 mt-5">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ vndr.shipstreet }}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-5 vl">
+                                        <p class="mb-0">City</p>
+                                    </div>
+                                    <div class="col-md-4 mt-5">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ vndr.shipcity }}</b></h6>
+                                    </div>
+                                </div>
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <p class="mb-0" >State</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ vndr.shipstate }}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <p class="mb-0">Pincode</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ vndr.shippincode }}</b></h6>
+                                    </div>
+                                    
+                                </div>
+                                <div class="row mb-5 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <p class="mb-0">Country</p>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <h6 class="mb-0" style="font-family: monospace;"><b>{{ vndr.shipcountry }}</b></h6>
+                                    </div>
+                                    <div class="col-md-2 mt-3">
+                                        
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        
+                                    </div>
+
+                                </div>
+                                <hr class="my-4">
+                            </div>
+                        </div>
+                        <div class="col-lg-4 bg-grey" style="right: 16px;">
+                            <div class="p-5">
+                                <h4 class="fw-bold mb-2 mt-5 pt-1"><b>GST</b></h4>
+                                <hr class="my-4">
+                                <div class="row mb-3 mt-5">
+                                    <label class="col-sm-3" style="font-size: medium;">GSTIN</label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-8">
+                                      <p style="font-size: medium;"><b>{{ vndr.gstin }}</b></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-3" style="font-size: medium;">GST Type</label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-8">
+                                      <p style="font-size: medium;"><b>{{ vndr.gsttype }}</b></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-3" style="font-size: medium;">PAN No</label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-8">
+                                      <p style="font-size: medium;"><b>{{ vndr.panno }}</b></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    {% if vndr.creditlimit %}
+                                    <label class="col-sm-3" style="font-size: medium;">Credit Limit</label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-8">
+                                        <p style="font-size: medium;"><b>{{ vndr.creditlimit }}</b></p>
+                                    </div>
+                                    {% else %}
+                                    <p class="col-sm-7" style="font-size: medium;"><b>
+                                        No Credit Limit Set
+                                    </b></p>
+                                    {% endif %}
+                                </div>
+                                
+                                
+                                <hr class="my-4">
+                                <div class="row mb-3 mt-5">
+                                    <label class="col-sm-5" style="font-size: medium;">Source of Supply</label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-6">
+                                      <p style="font-size: medium;"><b>{{ vndr.sourceofsupply }}</b></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-5" style="font-size: medium;">Currency</label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-6">
+                                      <p style="font-size: medium;"><b>{{ vndr.currency }}</b></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-5" style="font-size: medium;">Opening Balance Type</label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-6">
+                                      <p style="font-size: medium;"><b>{{ vndr.opening_balance_type }}</b></p>
+                                    </div>
+                                </div>
+                                {% if vndr.opening_balance_type == 'Credit' %}
+                                <div class="row mb-3">
+                                    <label class="col-sm-5" style="font-size: medium;">Opening Balance</label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-6">
+                                      <p style="font-size: medium;"><b>- {{ vndr.openingbalance }}/-</b></p>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="row mb-3">
+                                    <label class="col-sm-5" style="font-size: medium;">Opening Balance</label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-6">
+                                      <p style="font-size: medium;"><b>{{ vndr.openingbalance }}/-</b></p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                <div class="row mb-1">
+                                    <label class="col-sm-5" style="font-size: medium;">Payment Terms</label>
+                                    <p ><b>:</b></p>
+                                    <div class="col-sm-6">
+                                      <p style="font-size: medium;"><b>{{ vndr.paymentterms }}</b></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+                
+                <div id="statment" style="display: none;">
+                    <div class="container-fluid" >
+                        <div class="py-5">
+                            <div>
+                                <div class="card-body">
+                                    <form action="{% url 'viewvendor' vndr.vendorid %}" method="post" class="needs-validation" novalidate>
+                                        {% csrf_token %}
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <label id="reportperiod" style="text-align:left ">Report period</label><br>
+                                                
+                                                <select class="form-control" id="filterstyle" onchange="filterDate(this)"
+                                                        list="hosting-plan"
+                                                        name="reportperiod" type="text">
+                                                    <option value="" hidden><span class="bx bx-right-arrow-alt"></span>Select a period</option>
+                                                    <option value="Custom"><span class="bx bx-right-arrow-alt"></span>Custom</option>
+                                                    <option value="Today"><span class="bx bx-right-arrow-alt"></span>Today</option>
+                                                    <option value="This month"><span class="bx bx-right-arrow-alt"></span>This month</option>
+                                                    <option value="This financial year"><span class="bx bx-right-arrow-alt"></span>This financial year</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-4" id="frdate" style="display: none;">
+                                                <label for="from">From</label>
+                                                <input type="date" class="form-control" name="fper">
+                                            </div>
+                                            <div class="col-sm-4" id="todate" style="display: none;">
+                                                <label for="from">To</label>
+                                                <input type="date" class="form-control" name="tper">
+                                            </div>
+                                            <div class="col-md-3"></div>
+                                        </div>
+                                        <br>
+                                        <br>
+                                        <div class="row">
+                                            <div class="col-md-5"></div>
+                                            <div class="col-md-2"></div>
+                                            <div class="col-md-2"></div>
+                                            <div class="col-md-2">
+                                                <button class="btn text-white btn-sm " id="runreport" type="submit">Run report</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <hr>
+                            
+                            <div class="row hidden-md-up" style="margin-top: 15px;">
+                                <div class="col-md-7" style="margin: auto;">
+                                  <div  class="card">
+                                    <div id="panel">
+                                        <div class="card-block1">
+                                            <div id="whatToPrint1" class="print-container card-body">
+                                                <div class="container bootdey">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-sm-offset-1" style="padding:20px;">
+                                                            <div class="widget-box">
+                                                                <div class="widget-header widget-header-large bg-dark" >
+                                                                    <h5 class="widget-title mb-4 print-visible">
+                                                                       <strong><span class="h5 mt-3 text-white">Statement of Accounts</span></strong><br>
+                                                                        <input class="bg-dark" id="df" value="{{frd1}}" style="border: none; width: 13%;color: #F7F7F7;"  >to
+                                                                        <input class="bg-dark" type="text" id="dl" value="{{tod1}}" style="border: none; background-color: none;color: #F7F7F7;">
+                                                                    </h5>  
+                                                                </div>
+                                                
+                                                                <div class="widget-body">
+                                                                    <div class="widget-main padding-20">
+                                                                        <div class="row"  style="padding:20px;" >
+                                                                            
+                                                                            <div class="col-sm-12" style="margin-left: 26px;">
+                                                                                <div class="col-6">
+                                                                                    <div style="width:30px;">
+                                                                                        <img src="/media/images/default.png">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-6">
+                                                                                    <p style="font-size:12px;color:black;"><strong>{{ cmp1.cname }}</strong> <br>
+                                                                                        {{cmp1.city}} <br>
+                                                                                        {{cmp1.pincode}}<br>
+                                                                                        {{cmp1.state}},India <br>
+                                                                                        {{cmp1.cemail}}<br>
+                                                                                        {{cmp1.pincode}}<br>
+                                                                                    </p>  
+                                                                                </div>
+                                                                            
+                                                                            </div>
+                                                                           
+                                                                        </div>
+                                                                        
+                                                                        <div class="row col-12">
+                                                                            <div class="col-1"></div>
+                                                                            <div class="col-5">
+                                                                                <p style="font-size:12px;color:black;">To,<br><strong>{{vndr.firstname}} {{vndr.lastname}}</strong><br>
+                                                                                    {{vndr.street}},{{vndr.city}}<br>
+                                                                                    {{vndr.state}},{{vndr.country}}<br>
+                                                                                    {{vndr.pincode }}<br>
+                                                                                    {{vndr.email}}<br>
+                                                                                    {{vndr.phone}}<br>
+                                                                                </p>
+                                                                            </div>
+                                                                            <div class="col-2"></div>
+                                                                            <div class="col-4" >
+                                                                                <table style="font-size:12px;color:black;">
+                                                                                    <tr>
+                                                                                        <th class="text-black">Account Summary</th>
+                                                                                    </tr>
+                                                                                    {% if vndr.opening_balance_type == "Credit"  %}
+                                                                                    <tr>
+                                                                                        <th>Opening balance</th>
+                                                                                        <th>:</th>
+                                                                                        <th>- {{vndr.openingbalance}}</th>
+                                                                                    </tr>
+                                                                                    {% else %}
+                                                                                    <tr>
+                                                                                        <th>Opening balance</th>
+                                                                                        <th>:</th>
+                                                                                        <th>{{vndr.openingbalance}}</th>
+                                                                                    </tr>
+                                                                                    {% endif %}
+                                                                                    <tr>
+                                                                                        <th>Billed Amount</th>
+                                                                                        <th>:</th>
+                                                                                        <th>{{tot2.t2}}</th>
+                                                                                    </tr>
+                                                                                    <tr style="border-bottom: 1px solid black; width:100%;">
+                                                                                        <th>Amount received</th>
+                                                                                        <th>:</th>
+                                                                                        <th>{{received}}</th>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <th>Balance Due</th>
+                                                                                        <th>:</th>
+                                                                                        <th>{{tot6.t2}}</th>
+                                                                                    </tr>
+                                                                                </table>
+                                                                            </div>
+                                                                            
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12 mb-5">
+                                                                        <table id="logic" class="table table-bordered table-hover table-dark" width="100%" style="font-size:10px;color:black;">
+                                                                            <thead class="thead-dark">
+                                                                                <tr>
+                                                                                <th>Date</th>
+                                                                                <th>Transactions</th>
+                                                                                <th>Number</th>
+                                                                                <th>Amount</th>
+                                                                                <th>Payments</th>
+                                                                                <th>Balance</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody class="thead-dark">
+                                                                                <tr>
+                                                                                    <th>{{ tod }}</th>
+                                                                                    <th>**Opening Balance**</th>
+                                                                                    <td></td>
+                                                                                    <th>{{ tot2.t2 }}</th>
+                                                                                    <td>{{received}}</td>
+                                                                                    <th>{{ tot6.t2 }}{{ tot8.t2 }}</th>
+                                                                                </tr>
+                                                                                {% for i in statment %}
+                                                                                    <tr>
+                                                                                        <th>{{i.date | date:'d-m-Y'}}</th>
+                                                                                        <th>
+                                                                                            {% if i.transactions == "Payable"  %}
+                                                                                                Payment Payable
+                                                                                            {% elif i.transactions == "Billed"  %}
+                                                                                                Bill
+                                                                                            {% else %}
+                                                                                                {{i.transactions}}
+                                                                                            {% endif %}</th>
+                                                                                        <th>{% if i.pbill != null  %}
+                                                                                            {{i.pbill.bill_no}}
+                                                                                            {% endif %} 
+                                                                                            {% if i.pymnt != null  %}
+                                                                                            ₹{{i.payments}} 
+                                                                                            {% endif %} 
+                                                                                        </th>
+                                                                                        <th>
+                                                                                            {% if i.amount %}
+                                                                                            {{i.amount}}
+                                                                                            {% else %}
+                                                                                            0
+                                                                                            {% endif %}
+                                                                                        </th>
+                                                                                        <th>{% if i.payments %}
+                                                                                            {{i.payments}}
+                                                                                            {% endif %}
+                                                                                            </th>
+                                                                                        <th>{% if i.balance %}
+                                                                                            {{i.balance}}
+                                                                                            {% else %}
+                                                                                            0
+                                                                                            {% endif %} 
+                                                                                        </th>
+                                                                                    </tr>
+                                                                                {% endfor %}
+                                                                                <br>
+                                                                                <tr>
+                                                                                    <th colspan="5">Balance Due</th>
+                                                                                    <th >{{tot6.t2}}</th>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                            <tbody></tbody>
+                                                                        </table>
+                                                                    </div><br>
+                                                                    <div class="col-md-12 tab_logic">
+                                                                       
+                                                                    </div>
+                                                                    <div class="hr hr8 hr-double hr-dotted"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>    
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="whatToPrint">
+                <div id="transation" style="display: none;" >
+                    <div class="row mt-3 mb-3">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-10">
+                            <div class="row mt-5">
+                                <h5 style="margin-left: 15px;"><strong>{{ vndr.firstname }} {{ vndr.lastname }}</strong></h5>
+                            </div>
+                            <div class="row mt-4 mb-3">
+                                <div class="col-md-4">
+                                    <p style="font-family: monospace;font-size: large;">Mobile : <strong>{{vndr.mobile}}</strong></p>
+                                </div>
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4">
+                                    <p style="font-family: monospace;font-size: large;">Address : <strong>{{vndr.city}}</strong></p>
+                                </div>
+                            </div>
+                            <div class="row mt-3 mb-3">
+                                <div class="col-md-4">
+                                    <p style="font-family: monospace;font-size: large;">Email : <strong>{{vndr.email}}</strong></p>
+                                </div>
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4">
+                                    <p style="font-family: monospace;font-size: large;">GSTIN : <strong>{{vndr.gstin}}</strong></p>
+                                </div>
+                            </div>
+                            <div class="row mt-3 mb-3">
+                                <div class="col-md-4">
+                                    <p style="font-family: monospace; font-size: large;">
+                                        {% if vndr.creditlimit %}
+                                            Credit Limit: <strong>{{ vndr.creditlimit }}</strong>
+                                        {% else %}
+                                            No Credit Limit Set
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4">
+                                    
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row mt-4">
+                                <h5 style="margin-left: 15px;"><strong>Transactions</strong></h5>
+                            </div>
+                        </div>
+                        <div class="col-md-1"></div>
+                        
+                    </div>
+                    
+                    
+    
+                    <div class="row mt-4 mb-5">
+    
+                        <div class="col-md-1"></div>
+    
+                        <div class="col-md-10">
+    
+                            
+                            <table id="dataTable" class="table tabledata  table-bordered table-hover" style="border-width: 2px;">
+                                <thead>
+    
+                                    <tr>
+                                        
+                                        <th class="type-column">
+                                            <div class="row">
+                                                
+                                                <div class="col-md-12">
+                                                    <div class="btn-group  dropup">
+                                                        <button type="button" class="btn  text-white" >Type</button>
+                                                        <button type="button" class="btn   text-white  dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <span class="visually-hidden"></span>
+                                                        </button>
+                                                        <ul id="filterDropdown" class="dropdown-menu">
+                                                            
+                                                            <form method="post" action="">
+                                                                {% csrf_token %}
+    
+                                                                <div class="container">
+                                                                                                                                
+                                                                    
+                                                                    <div class="form-check mb-1">
+                                                                        <input class="form-check-input checkboxFilter" type="checkbox" value="Bill" id="checkboxbill">
+                                                                        <label class="form-check-label" for="flexCheckChecked">
+                                                                          Bill
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-check mb-1">
+                                                                        <input class="form-check-input checkboxFilter" type="checkbox" value="Purchase Order" id="checkboxorder">
+                                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                                          Purchase Order
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-check mb-1">
+                                                                        <input class="form-check-input checkboxFilter" type="checkbox" value="Expense" id="checkboxexpense">
+                                                                        <label class="form-check-label" for="flexCheckChecked">
+                                                                          Expense
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-check mb-1">
+                                                                        <input class="form-check-input checkboxFilter" type="checkbox" value="Payment" id="checkboxpayment">
+                                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                                          Payment
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-check mb-1">
+                                                                        <input class="form-check-input checkboxFilter" type="checkbox" value="Debit Note" id="checkboxdebit">
+                                                                        <label class="form-check-label" for="flexCheckChecked">
+                                                                          Debit Note
+                                                                        </label>
+                                                                    </div>
+                                                                    
+                                                                    
+                                                                    <div class="d-grid gap-2 d-md-block">
+                                                                        
+                                                                        <input type="reset" id="resetbtn" class="btn btn-outline-info btn-sm  text-grey w-30 mt-3 mb-3" value="Clear" >
+                                                                    </div>
+    
+                                                                </div>
+                                                                
+    
+                                                            </form>
+                                                            
+                                                        </ul>
+                                                        </div>
+                                                </div>
+                                                
+                                                
+                                            </div>
+                                            
+                                        </th>
+                                        <th class="filterable-column">
+                                            <div class="btn-group dropup">
+                                                <button type="button" class="btn text-white">Number</button>
+                                                <button class="btn text-white dropdown-toggle" type="button" id="numberFilterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="numberFilterDropdown">
+                                                    <div class="input-group mt-2 mb-2">
+                                                        <input type="text" class="form-control" id="numberfilter" placeholder="Enter number">
+                                                    </div>
+                                                    <div class="d-grid gap-2 d-md-block">
+                                                                        
+                                                        <input type="submit" id="submitbtn" class=" filter-button btn btn-outline-info btn-sm  text-grey w-30 mt-1 mb-1" value="submit" style="margin-left: 5px;">
+                                                        <input type="reset" id="clearbtn" class="clearbtn btn btn-outline-info btn-sm  text-grey w-30 mt-3 mb-3" value="Clear" >
+    
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+    
+                                        <th class="filterable-column">
+                                            <div class="btn-group dropup">
+                                                <button type="button" class="btn text-white">Date</button>
+                                                <button class="btn text-white dropdown-toggle" type="button" id="dateFilterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dateFilterDropdown">
+                                                    <div class="input-group mt-2 mb-2">
+                                                        <input type="date" class="form-control" id="datefilter" placeholder="Enter date">
+                                                    </div>
+                                                    <div class="d-grid gap-2 d-md-block">
+                                                                        
+                                                        <input type="submit" id="submitbtn1" class="filter-button btn btn-outline-info btn-sm  text-grey w-30 mt-1 mb-1" value="submit" style="margin-left: 5px;">
+                                                        <input type="reset" id="clearbtn1" class="clearbtn btn btn-outline-info btn-sm  text-grey w-30 mt-3 mb-3" value="Clear" >
+    
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        
+                                        <th class="filterable-column">
+                                            <div class="btn-group dropup">
+                                                <button type="button" class="btn text-white">Total</button>
+                                                <button class="btn  text-white dropdown-toggle" type="button" id="totalFilterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="totalFilterDropdown">
+                                                    <div class="input-group  mt-2 mb-2">
+                                                        <input type="text" class="form-control" id="totalfilter" placeholder="Enter total">
+                                                    </div>
+                                                    <div class="d-grid gap-2 d-md-block">
+                                                                        
+                                                        <input type="submit" id="submitbtn2" class="filter-button btn btn-outline-info btn-sm  text-grey w-30 mt-1 mb-1" value="submit" style="margin-left: 5px;">
+                                                        <input type="reset" id="clearbtn2" class="clearbtn btn btn-outline-info btn-sm  text-grey w-30 mt-3 mb-3" value="Clear" >
+    
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+    
+                                        <th class="filterable-column">
+                                            <div class="btn-group dropup">
+                                                <button type="button" class="btn  text-white">Balance</button>
+                                                <button class="btn text-white dropdown-toggle" type="button" id="balanceFilterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="balanceFilterDropdown">
+                                                    <div class="input-group mt-2 mb-2">
+                                                        <input type="text" class="form-control" id="balancefilter" placeholder="Enter balance">
+                                                    </div>
+                                                    <div class="d-grid gap-2 d-md-block">
+                                                                        
+                                                        <input type="submit" id="submitbtn3" class="filter-button btn btn-outline-info btn-sm  text-grey w-30 mt-1 mb-1" value="submit" style="margin-left: 5px;">
+                                                        <input type="reset" id="clearbtn3" class="clearbtn btn btn-outline-info btn-sm  text-grey w-30 mt-3 mb-3" value="Clear" >
+    
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+    
+                                </thead>
+                                <tbody>
+                                    {% for data in combined_data %}
+                                    <tr>
+                                        <th style="font-family: monospace;"><strong>{{data.Type}}</strong></th>
+                                        <td>{{data.Number}}</td>
+                                        <td>{{data.Date|date:'d-m-Y'}}</td>
+                                        <td>{{data.Total}}</td>
+                                        <td>{{data.Balance}}</td>
+    
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+    
+                            </table>
+                            
+    
+                        </div>
+    
+                        <div class="col-md-1"></div>
+    
+                    </div>
+    
+                </div>
+    
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- attach file modal -->
+    <div class="modal fade" id="attachModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="commentModalLabel">Upload File</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form  id="comment-form" action="{% url 'upload_file_vendor' vndr.vendorid %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="file"  style="margin-top: 10px; width: 70%;">
+                <div class="text-center pt-4 pb-2">
+                    <button class="btn btn-info " type="submit">Submit</button>
+                </div>
+                
+              </form>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="background-color: #233D52;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="commentModalLabel">Add Comment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="commentsContainer">
+                    <!-- Form to submit a new comment -->
+                    <form method="post" action="{% url 'add_comment' vndr.vendorid %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="commentText">Comment:</label>
+                            <input type="text" class="form-control" id="commentText" name="comment_text" required>
+                        </div>
+                        <!-- <button type="submit" class="btn btn-primary">Submit</button>
+                    </form> -->
+                    <div class="container-fluid">
+                    <table class="table table-responsive-md mt-4">
+                        <thead>
+                        <tr>
+                            <th>sl no.</th>
+                            <th>Comments</th>
+                            <th>Delete</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for comment in comments %}
+                        <tr  class="table-row">
+                            <td>{{forloop.counter }}</td>
+                            <td>{{ comment.comment_text }}</td>
+                            <td><a href="{% url 'delete_comment' comment.id %}" class="btn-sm delete-comment">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <script type="text/javascript">
+        $('.delete').click(function(e){
+            var result = confirm("Are you sure you want to delete this record ?");
+
+            if(!result) {
+                e.preventDefault();
+            }
+        });
+    </script>
+
+   <script>
+        $(document).ready(function () {
+            var t6 = parseFloat('{{ tot6.t2 }}');
+            var t7 = parseFloat('{{ tot7.t3 }}');
+            if (Number.isNaN(t6)) {
+                t6 = 0;
+            }
+            if (Number.isNaN(t7)) {
+                t7 = 0;
+            }
+            var t = t6
+            var tt = t7
+            document.getElementById('t2').innerHTML = "&#8377;" + t
+            document.getElementById('t3').innerHTML = "&#8377;" + tt
+        });
+    </script>
+
+
+    <script>
+        function filterDate(element) {
+            if (element.value == 'Custom') {
+                document.getElementById('frdate').style.display = 'block';
+                document.getElementById('todate').style.display = 'block';
+            } else {
+                document.getElementById('frdate').style.display = 'none';
+                document.getElementById('todate').style.display = 'none';
+            }
+        }
+    </script>
+    <link rel="stylesheet" type="text/css" href="path/to/print-styles.css">
+
+     <script>
+        function printDiv() {
+            var printDiv = document.getElementById("whatToPrint1");
+            var originalContents = document.body.innerHTML;
+
+            document.body.innerHTML = printDiv.innerHTML;
+
+            window.print();
+
+            document.body.innerHTML = originalContents;
+        }
+    </script>
+  <style>
+    @media print {
+        /* Add these styles to override any fading or visibility issues */
+        #whatToPrint1 {
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        h5.widget-title {
+            color: white !important;
+        }
+
+        #whatToPrint1 input,
+        #whatToPrint1 textarea,
+        #whatToPrint1 select {
+            color: #F7F7F7 !important;
+        }
+
+        .table.table-bordered.table-hover.table-dark,
+        .table.table-bordered.table-hover.table-dark th,
+        .table.table-bordered.table-hover.table-dark td {
+            color: white !important;
+            border-color: white !important;
+        }
+
+        /* Adjust other styles as needed */
+    }
+</style>
+
+    <!-- <style>
+        @media print {
+            body {
+                color: black !important;
+            }
+            table{
+                font-size:12px;
+                color:black;  
+            }
+        }
+    </style> -->
+    
+    <script>
+        
+        function Details() {
+            
+            document.getElementById('details').style.display = 'block';
+            document.getElementById('statment').style.display = 'none';
+            document.getElementById('transation').style.display = 'none';
+        }
+        function Statment() {
+            
+            document.getElementById('details').style.display = 'none';
+            document.getElementById('statment').style.display = 'block';
+            document.getElementById('transation').style.display = 'none';              
+        }
+        function transaction() {
+            
+            document.getElementById('details').style.display = 'none';
+            document.getElementById('statment').style.display = 'none';
+            document.getElementById('transation').style.display = 'block';          
+        }
+    </script>
+
+    <script>
+        function dispinv(){
+            document.getElementById('invtable').style.display = 'block';
+        }
+        function dispdeb(){
+            document.getElementById('pdebtable').style.display = 'block';
+        }
+        function dispay(){
+            document.getElementById('paytable').style.display = 'block';
+        }
+        function disest(){
+            document.getElementById('esttable').style.display = 'block';
+        }
+        function dissale(){
+            document.getElementById('saletable').style.display = 'block';
+        }
+    </script>
+    <script>
+        const attachButton = document.getElementById("attach-button");
+        const fileInput = document.getElementById("file-input");
+    
+        attachButton.addEventListener("click", () => {
+            fileInput.click();
+        });
+    
+        fileInput.addEventListener("change", () => {
+            fileInput.style.display = "none";
+        });
+    
+    </script>
+    
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function updateTableContent(combinedData) {
+            var tableBody = $('#dataTable tbody'); // Get the table body element
+
+            // Clear existing table rows
+            tableBody.empty();
+
+            // Iterate through the new combinedData and append rows to the table
+            $.each(combinedData, function(index, item) {
+                var newRow = '<tr>';
+                newRow += '<th style="font-family: monospace;"><strong>' + item.Type + '</strong></th>';
+                newRow += '<td>' + item.Number + '</td>';
+                newRow += '<td>' + item.Date + '</td>';
+                newRow += '<td>' + item.Total + '</td>';
+                newRow += '<td>' + item.Balance + '</td>';
+                newRow += '</tr>';
+
+                // Append the new row to the table body
+                tableBody.append(newRow);
+            });
+        }
+
+        $(document).ready(function() {
+            $('.checkboxFilter').change(function() {
+                var selectedTypes = [];
+                
+
+                $('.checkboxFilter:checked').each(function() {
+                    selectedTypes.push($(this).val());
+                });
+
+                if ($('#checkboxAll').is(':checked')) {
+                    selectedTypes.push('All');
+                }
+
+                $.ajax({
+                    url: '{% url "get_transaction_data" vndr.vendorid %}',
+                    type: 'GET',
+                    data: { selectedTypes: selectedTypes },
+                    dataType: 'json',
+                    success: function(data) {
+                        updateTableContent(data.combined_data);
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }
+                });
+            });
+
+            // Add a click event handler for the "Reset" button
+            $('#resetbtn').click(function() {
+                // Make an AJAX request to fetch the original combined_data
+                $.ajax({
+                    url: '{% url "get_transaction_data" vndr.vendorid %}', // Replace with the actual URL to fetch the original data
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        updateTableContent(data.combined_data);
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }
+                });
+            });
+        });
+
+        // Add a click event handler for the input box in the other column
+        $('.filter-button').click(function() {
+            
+            var numbervalue = $('#numberfilter').val();
+            var datevalue = $('#datefilter').val();
+            var totalvalue = $('#totalfilter').val();
+            var balancevalue = $('#balancefilter').val();
+
+            // Make an AJAX request to filter based on the input box value
+            $.ajax({
+                url: '{% url "get_transaction_data" vndr.vendorid %}', // Replace with the actual URL to filter data based on input
+                type: 'GET',
+                data: {
+                    
+                    numbervalue: numbervalue,
+                    datevalue: datevalue,
+                    totalvalue: totalvalue,
+                    balancevalue: balancevalue
+                },
+                dataType: 'json',
+                success: function(data) {
+                    updateTableContent(data.combined_data);
+                },
+                error: function(error) {
+                    console.error(error);
+                }
+            });
+
+            $('.clearbtn').click(function() {
+                // Make an AJAX request to fetch the original combined_data
+                // Clear input box values
+                $('#numberfilter').val('');
+                $('#datefilter').val('');
+                $('#totalfilter').val('');
+                $('#balancefilter').val('');
+                $.ajax({
+                    url: '{% url "get_transaction_data" vndr.vendorid %}', // Replace with the actual URL to fetch the original data
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        updateTableContent(data.combined_data);
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }
+                });
+            });
+        });
+    </script>
+
+<script>
+    function generatePDF() {
+        var element = document.getElementById('panel');
+
+        html2pdf(element);
+    }
+</script>
+
+
+    
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"
+    integrity="sha384-eMNCOe7tC1doHpGoWe/6oMVemdAVTMs2xqW4mwXrXsW0L84Iytr2wi5v2QjrP/xp"
+    crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js"
+    integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/"
+    crossorigin="anonymous"></script>
+{% endblock %}

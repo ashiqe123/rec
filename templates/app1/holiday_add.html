@@ -1,0 +1,83 @@
+<!-- reshna-holidays-->
+{% extends 'app1/base.html' %}
+{% block body %}
+    {% load static %}
+
+    <style>
+        .hide{
+			display: none;
+    	}
+        input:read-only {
+            background-color: rgba(0,0,0,.4) !important;
+            color: #fff;
+        }
+    </style>
+    <script>
+        $(':input[readonly]').css({'background-color':'rgba(0,0,0,.4)'});
+    </script>
+
+    <div class="page-content">
+        <div class="card radius-15">
+            <div class="card-body">
+                <div class="card-title">
+                    <center><h3 class="mb-0">NEW HOLIDAY</h3></center>
+                </div>
+                <hr/>
+            </div>
+        </div>
+        <div class="card radius-15" style="background-color: #243e54;">
+            <div class="card-body">
+               
+                     <div class="card-title">
+                      <h4 class="mb-0">Holiday Details</h4>
+                </div>
+                <hr/>
+                <form method="post" action="{% url 'addholidays'%}" autocomplete="off">
+                    {% csrf_token %}
+                    <div class="row mt-2 mb-2">
+                        <div class="col-md-6">
+                            <label for="start_date">Start_date</label>
+                            <input type="date" name="start_date" id="start_date" class="custom-select-md form-control w-100">        
+                        </div>
+                        <div class="col-md-6">
+                            <label for="end_date">End_date</label>
+                            <input  type="date" name="end_date" id="end_date" class="custom-select-md form-control w-100">
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <label for="name">Holiday Name</label>
+                            <input name="name" id="name" class="custom-select-md form-control w-100">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                                <label>Agree to terms and conditions</label>
+                                <div class="invalid-feedback">You must agree before submitting.</div>
+                            </div>
+                        </div>
+                    </div>
+                  
+                    <div class="row">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4 mt-4 mb-4">
+                            <button type="submit" class="btn btn-outline-info rounded-pill w-100">Add</button>
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+                   
+            
+          
+        </div>
+    </div>
+</div>
+</div>  
+  
+
+
+   
+    
+{% endblock %}
