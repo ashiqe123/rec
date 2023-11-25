@@ -49079,133 +49079,6 @@ def repayment(request,id):
     return render(request,'app1/employee_repayment.html',{'bnk':bnk,'cmp1':cmp1,'employ':employ})
     
     
-def crt_emp_loan_trans(request, id):
-    cid = company.objects.get(id=request.session["uid"])
-    
-    if request.method == 'POST':
-        principal = int(request.POST.get('principal'))
-        date = request.POST.get('date')
-        intrest = request.POST.get('interest')
-        employ = request.POST.get('emp')
-        total = int(request.POST.get('total'))
-        received_from = request.POST.get('payment_method')
-        cheque_id = request.POST['cheque_id'] 
-        upi_id = request.POST['upi_id'] 
-        bnk_id = request.POST['bnk_id'] 
-        payment_method = request.POST['payment_method']
-        employee = payrollemployee.objects.get(employeeid=employ)
-        print(id)
-        # Fetch the loan account
-        loan = EmployeeLoan.objects.get(id=id)
-        # Deduct payment based on source (cash or bank)
-        print(loan.balance_loan)
-
-        if received_from == 'cash':
-            # Deduct from company's cash balance
-            cid.cash += principal
-            cid.save()
-            transaction = employee_loan_tran(
-            employee=employee,
-            cid=cid,
-            emploee_loan=loan,
-            loan_trans_date=date,
-            particular= 'EMI PAID ',
-            amount= principal,
-            intrest = intrest,
-            total_amount = total,
-            payment_type = 'cash',
-            balance_loan= loan.balance_loan - principal,
-            payment_method=payment_method
-
-            )
-            print(loan.balance_loan)
-            print('bal')
-            if loan.balance_loan <= 0:
-                messages.error(request, 'Principal amount must be greater than Loan .Balance  Loan  is .' + str(loan.balance_loan))
-                return redirect('employee_details', id)
-            transaction.save()
-        elif received_from == 'upi':
-            cid.cash += principal
-            cid.save()
-            transaction = employee_loan_tran(
-            employee=employee,
-            cid=cid,
-            emploee_loan=loan,
-            loan_trans_date=date,
-            particular= 'EMI PAID ',
-            amount= principal,
-            intrest = intrest,
-            total_amount = total,
-            payment_type = 'upi',
-            balance_loan= loan.balance_loan - principal,
-            upi_no=upi_id,payment_method=payment_method
-
-            )
-            print(loan.balance_loan)
-            print('bal')
-            if loan.balance_loan <= 0:
-                messages.error(request, 'Principal amount must be greater than Loan .Balance  Loan  is .' + str(loan.balance_loan))
-                return redirect('employee_details', id)
-            transaction.save()
-        elif received_from == 'cheque':
-            cid.cash += principal
-            cid.save()
-            transaction = employee_loan_tran(
-            employee=employee,
-            cid=cid,
-            emploee_loan=loan,
-            loan_trans_date=date,
-            particular= 'EMI PAID ',
-            amount= principal,
-            intrest = intrest,
-            total_amount = total,
-            payment_type = 'cheque',
-            balance_loan= loan.balance_loan - principal,
-            cheque_no=cheque_id,payment_method=payment_method
-
-            )
-            print(loan.balance_loan)
-            print('bal')
-            if loan.balance_loan <= 0:
-                messages.error(request, 'Principal amount must be greater than Loan .Balance  Loan  is .' + str(loan.balance_loan))
-                return redirect('employee_details', id)
-            transaction.save()
-
-        else:
-            # Deduct from the selected bank's balance
-            received_bank = bankings_G.objects.get(bankname=received_from)
-            received_bank.balance += principal
-            received_bank.save()
-            transaction = employee_loan_tran(
-            employee=employee,
-            cid=cid,
-            emploee_loan=loan,
-            loan_trans_date=date,
-            particular= 'EMI PAID ',
-            amount= principal,
-            intrest = intrest,
-            total_amount = total,
-            payment_type = received_bank.bankname,
-            balance_loan= loan.balance_loan - principal,
-            payment_method=payment_method
-        )
-            print(loan.balance_loan)
-            print('bal')
-            if loan.balance_loan <= 0:
-                messages.error(request, 'Principal amount must be greater than Loan .Balance  Loan  is .' + str(loan.balance_loan) )
-                return redirect('employee_details', id)
-        transaction.save()
-            # Add the payment amount to the lender bank (if not cash)
-        loan.balance_loan -= principal
-        loan.save()
-                
-       
-        # Update the loan account balance
-        # Create a transaction record
-        
-
-    return redirect('employee_details',id)
-    
 
 def loandue(request,id):
     cmp1 = company.objects.get(id=request.session['uid'])
@@ -49297,117 +49170,7 @@ def edit_repayment(request,id):
     employ = employee_loan_tran.objects.get(id=id)
     return render(request,'app1/edit_repayment.html',{'cmp1':cmp1,'bnk':bnk,'employ':employ})
     
-    
-def make_edit_pay(request,id):
-    cid = company.objects.get(id=request.session["uid"])
 
-    if request.method == 'POST':
-        principal = int(request.POST.get('principal'))
-        date = request.POST.get('date')
-        interest = int(request.POST.get('interest'))
-        employ = request.POST.get('emp')
-        received_from = request.POST.get('payment_method')
-        total=request.POST.get('total')
-        cheque_id = request.POST['cheque_id'] 
-        upi_id = request.POST['upi_id'] 
-        bnk_id = request.POST['bnk_id'] 
-        payment_method = request.POST['payment_method']
-        print(received_from)
-        pay_employee = get_object_or_404(payrollemployee, employeeid=employ)
-        loan_transaction = get_object_or_404(employee_loan_tran, id=id)
-        employee_loan_instance = loan_transaction.emploee_loan
-        employee_id = EmployeeLoan.objects.get(id=employee_loan_instance.id)
-        print(employee_id.id)
-        limit = loan_transaction.amount
-        print('0000000000000')
-        print(limit)
-        print(total)
-        print(principal)
-        print('00000000000')
-        # Adjust balance_loan
-        loan_transaction.balance_loan += loan_transaction.amount
-        
-        
-        print('plus')
-        loan_transaction.save()
-        employee_id.balance_loan += loan_transaction.amount
-        employee_id.save()
-
-        if received_from == 'cash':
-            cid.cash -= limit
-            cid.save()
-        elif received_from == 'upi':
-           payment_type = 'upi'
-
-        elif received_from == 'cheque':
-           payment_type = 'cheque'
-        else:
-            received_bank = bankings_G.objects.get(bankname=received_from)
-            received_bank.balance -= limit
-            received_bank.save()
-            
-
-        if received_from == 'cash':
-            cid.cash += int(total)
-            cid.save()
-            
-        elif received_from == 'upi':
-           payment_type = 'upi'
-
-        elif received_from == 'cheque':
-            payment_type = 'cheque'
-        else:
-            received_bank = bankings_G.objects.get(bankname=received_from)
-            received_bank.balance += int(total)
-            received_bank.save()
-            payment_type = received_from
-
-        # Update the loan transaction
-
-        loan_transaction.employee = pay_employee
-        loan_transaction.cid = cid
-        loan_transaction.loan_trans_date = date
-        loan_transaction.particular = 'EMI PAID'
-        loan_transaction.amount = principal
-        loan_transaction.intrest = interest
-        loan_transaction.total_amount = int(total)
-        loan_transaction.payment_type = payment_method
-        loan_transaction.balance_loan -= principal
-        loan_transaction.upi_no = upi_id
-        loan_transaction.cheque_no = cheque_id
-        loan_transaction.payment_method = payment_method
-        print('done')
-
-      
-        loan_transaction.save()
-        loan_trans = employee_loan_tran.objects.filter(cid = cid).exclude(particular='ADDITIONAL LOAN ISSUED')
-        employee_id.balance_loan = employee_id.LoanAmount
-        employee_id.save()
-        for i in loan_trans:
-                total_balance =employee_id.balance_loan
-                
-                print('balance '+ str(total_balance) )
-                if i.particular == 'EMI PAID':
-                    res = employee_id.balance_loan - i.amount
-                    
-                else:
-                    res = employee_id.balance_loan + i.amount
-                print(res)
-                i.balance_loan  = res
-                print(i.id)
-                print('first')
-                i.save()
-                employee_id.balance_loan = res
-                employee_id.save()
-
-        employee_loan_instance = loan_transaction.emploee_loan
-        employee_id = EmployeeLoan.objects.get(id=employee_loan_instance.id)
-        res = int(employee_id.balance_loan) - int(principal)
-        employee_id.balance_loan = res
-        employee_id.save()
-
-    return redirect('employee_details',employee_id.id)
-    
     
 def dlt_loan_trans(request, id):
     cid = company.objects.get(id=request.session["uid"])
@@ -51061,3 +50824,243 @@ def check_user_loan(request):
 
 
 
+##################################
+
+
+    
+def crt_emp_loan_trans(request, id):
+    cid = company.objects.get(id=request.session["uid"])
+    
+    if request.method == 'POST':
+        principal = int(request.POST.get('principal'))
+        date = request.POST.get('date')
+        intrest = request.POST.get('interest')
+        employ = request.POST.get('emp')
+        total = int(request.POST.get('total'))
+        received_from = request.POST.get('payment_method')
+        cheque_id = request.POST['cheque_id'] 
+        upi_id = request.POST['upi_id'] 
+        bnk_id = request.POST['bnk_id'] 
+        payment_method = request.POST['payment_method']
+        employee = payrollemployee.objects.get(employeeid=employ)
+        print(id)
+        # Fetch the loan account
+        loan = EmployeeLoan.objects.get(id=id)
+        # Deduct payment based on source (cash or bank)
+        print(loan.balance_loan)
+
+        if received_from == 'cash':
+            # Deduct from company's cash balance
+            cid.cash += principal
+            cid.save()
+            transaction = employee_loan_tran(
+            employee=employee,
+            cid=cid,
+            emploee_loan=loan,
+            loan_trans_date=date,
+            particular= 'EMI PAID',
+            amount= principal,
+            intrest = intrest,
+            total_amount = total,
+            payment_type = 'cash',
+            balance_loan= loan.balance_loan - principal,
+            payment_method=payment_method
+
+            )
+            print(loan.balance_loan)
+            print('bal')
+            if loan.balance_loan <= 0:
+                messages.error(request, 'Principal amount must be greater than Loan .Balance  Loan  is .' + str(loan.balance_loan))
+                return redirect('employee_details', id)
+            transaction.save()
+        elif received_from == 'upi':
+            cid.cash += principal
+            cid.save()
+            transaction = employee_loan_tran(
+            employee=employee,
+            cid=cid,
+            emploee_loan=loan,
+            loan_trans_date=date,
+            particular= 'EMI PAID',
+            amount= principal,
+            intrest = intrest,
+            total_amount = total,
+            payment_type = 'upi',
+            balance_loan= loan.balance_loan - principal,
+            upi_no=upi_id,payment_method=payment_method
+
+            )
+            print(loan.balance_loan)
+            print('bal')
+            if loan.balance_loan <= 0:
+                messages.error(request, 'Principal amount must be greater than Loan .Balance  Loan  is .' + str(loan.balance_loan))
+                return redirect('employee_details', id)
+            transaction.save()
+        elif received_from == 'cheque':
+            cid.cash += principal
+            cid.save()
+            transaction = employee_loan_tran(
+            employee=employee,
+            cid=cid,
+            emploee_loan=loan,
+            loan_trans_date=date,
+            particular= 'EMI PAID',
+            amount= principal,
+            intrest = intrest,
+            total_amount = total,
+            payment_type = 'cheque',
+            balance_loan= loan.balance_loan - principal,
+            cheque_no=cheque_id,payment_method=payment_method
+
+            )
+            print(loan.balance_loan)
+            print('bal')
+            if loan.balance_loan <= 0:
+                messages.error(request, 'Principal amount must be greater than Loan .Balance  Loan  is .' + str(loan.balance_loan))
+                return redirect('employee_details', id)
+            transaction.save()
+
+        else:
+            # Deduct from the selected bank's balance
+            received_bank = bankings_G.objects.get(bankname=received_from)
+            received_bank.balance += principal
+            received_bank.save()
+            transaction = employee_loan_tran(
+            employee=employee,
+            cid=cid,
+            emploee_loan=loan,
+            loan_trans_date=date,
+            particular= 'EMI PAID',
+            amount= principal,
+            intrest = intrest,
+            total_amount = total,
+            payment_type = received_bank.bankname,
+            balance_loan= loan.balance_loan - principal,
+            payment_method=payment_method
+        )
+            print(loan.balance_loan)
+            print('bal')
+            if loan.balance_loan <= 0:
+                messages.error(request, 'Principal amount must be greater than Loan .Balance  Loan  is .' + str(loan.balance_loan) )
+                return redirect('employee_details', id)
+        transaction.save()
+            # Add the payment amount to the lender bank (if not cash)
+        loan.balance_loan -= principal
+        loan.save()
+                
+       
+        # Update the loan account balance
+        # Create a transaction record
+        
+
+    return redirect('employee_details',id)
+
+
+
+    
+def make_edit_pay(request,id):
+    cid = company.objects.get(id=request.session["uid"])
+
+    if request.method == 'POST':
+        principal = int(request.POST.get('principal'))
+        date = request.POST.get('date')
+        interest = int(request.POST.get('interest'))
+        employ = request.POST.get('emp')
+        received_from = request.POST.get('payment_method')
+        total=request.POST.get('total')
+        cheque_id = request.POST['cheque_id'] 
+        upi_id = request.POST['upi_id'] 
+        bnk_id = request.POST['bnk_id'] 
+        payment_method = request.POST['payment_method']
+        print(received_from)
+        pay_employee = get_object_or_404(payrollemployee, employeeid=employ)
+        loan_transaction = get_object_or_404(employee_loan_tran, id=id)
+        employee_loan_instance = loan_transaction.emploee_loan
+        employee_id = EmployeeLoan.objects.get(id=employee_loan_instance.id)
+        print(employee_id.id)
+        limit = loan_transaction.amount
+        print('0000000000000')
+        print(limit)
+        print(total)
+        print(principal)
+        print('00000000000')
+        # Adjust balance_loan
+        loan_transaction.balance_loan += loan_transaction.amount
+        
+        
+        print('plus')
+        loan_transaction.save()
+        employee_id.balance_loan += loan_transaction.amount
+        employee_id.save()
+
+        if received_from == 'cash':
+            cid.cash -= limit
+            cid.save()
+        elif received_from == 'upi':
+           payment_type = 'upi'
+
+        elif received_from == 'cheque':
+           payment_type = 'cheque'
+        else:
+            received_bank = bankings_G.objects.get(bankname=received_from)
+            received_bank.balance -= limit
+            received_bank.save()
+            
+
+        if received_from == 'cash':
+            cid.cash += int(total)
+            cid.save()
+            
+        elif received_from == 'upi':
+           payment_type = 'upi'
+
+        elif received_from == 'cheque':
+            payment_type = 'cheque'
+        else:
+            received_bank = bankings_G.objects.get(bankname=received_from)
+            received_bank.balance += int(total)
+            received_bank.save()
+            payment_type = received_from
+
+        # Update the loan transaction
+
+        loan_transaction.employee = pay_employee
+        loan_transaction.cid = cid
+        loan_transaction.loan_trans_date = date
+        loan_transaction.particular = 'EMI PAID'
+        loan_transaction.amount = principal
+        loan_transaction.intrest = interest
+        loan_transaction.total_amount = int(total)
+        loan_transaction.payment_type = payment_method
+        loan_transaction.balance_loan -= principal
+        loan_transaction.upi_no = upi_id
+        loan_transaction.cheque_no = cheque_id
+        loan_transaction.payment_method = payment_method
+        print('done')
+
+      
+        loan_transaction.save()
+        loan_trans = employee_loan_tran.objects.filter(cid = cid)
+
+        for i in loan_trans:
+                total_balance =employee_id.balance_loan
+                print('balance '+ str(total_balance) )
+                if i.particular=='LOAN ISSUED':
+                    res = employee_id.balance_loan = i.amount
+                elif i.particular == 'EMI PAID':
+                    res = employee_id.balance_loan - i.amount
+                    print('true')
+                elif i.particular == 'ADDITIONAL LOAN ISSUED':
+                    print('false')
+                    res = employee_id.balance_loan + i.amount
+                i.balance_loan  = res
+                i.save()
+                employee_id.balance_loan = res
+                employee_id.save()
+
+                print('done')
+
+        
+
+    return redirect('employee_details',employee_id.id)
+    

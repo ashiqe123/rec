@@ -2442,6 +2442,7 @@ class employee_loan_tran(models.Model):
     payment_method=models.CharField(null=True,blank=True,max_length=255)
     
     
+    
 class paymnt_made_comments(models.Model):
     commentid = models.AutoField(('COMMENTID'), primary_key=True)
     empid = models.ForeignKey(purchasepayment, on_delete=models.CASCADE)
