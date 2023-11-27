@@ -1367,10 +1367,10 @@ footer p {
 
         <div id="slipdiv" style="background-color: #243e54; border-radius: 2vh; display: none; ">
             <div class="p-5"  >
-                <div class="my-5 page" size="A4">
+                <div class="my-5 page" size="A4" >
                     <div class="row" style="margin-top: 20%;" id="printslip">
                         <div class="col-md-3"></div>
-                        <div class="col-md-6 ml-3">
+                        <div class="col-md-6">
                             <div class="card bg-white" style="border: 1px dotted black;">
                                 <div class="mt-2" style="text-align: center;">
                                     <div class="text-center" style="font-size: 3vh; color: black;">
@@ -1383,7 +1383,7 @@ footer p {
                                         {{ cmp1.phone }} <br>{{ cmp1.cemail }} 
                                     </span>
                                 </div>
-                                <div class="ml-4 mt-2" style="color: black;">
+                                <div class="ml-3 mr-3 mt-2" style="color: black;">
                                     <div class="row">
                                         <div class="col-md-6 text-left">Recurring Bill No:</div>
                                         <div class="col-md-5 text-right">{{rbill.billno}}</div>
@@ -1466,89 +1466,90 @@ footer p {
                                 </div>
 
                                 <div><br>
+                                 
+                                    <div class="row  mr-2 ml-2">
+                                        <div class="col-md-5 text-left" style=" color: black;">
+                                            Subtotal
+                                        </div>
+                                        <div class="col-md-7 text-right  " style="color: black;">
+                                            {{ rbill.grand_total }}
+                                        </div>
+                                    </div>
+                                    {% if rbill.igst != 0 %}
+                                    <div class="row  mr-2 ml-2">
+                                        <div class="col-md-5 text-left " style=" color: black;">
+                                            IGST
+                                        </div>
+                                        <div class="col-md-7 text-right " style="color: black;">
+                                            {{ rbill.igst }}
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <div class="row  mr-2 ml-2">
+                                        <div class="col-md-5 text-left" style=" color: black;">
+                                            CGST
+                                        </div>
+                                        <div class="col-md-7 text-right " style="color: black;">
+                                            {{ rbill.cgst }}
+                                        </div>
+                                    </div>
+                                    <div class="row mr-2 ml-2">
+                                        <div class="col-md-5 text-left" style=" color: black;">
+                                            SGST
+                                        </div>
+                                        <div class="col-md-7 text-right " style="color: black;">
+                                            {{ rbill.sgst }}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    <div class="row  mr-2 ml-2">
+                                        <div class="col-md-5 text-left" style=" color: black;">
+                                            Total Tax
+                                        </div>
+                                        <div class="col-md-7 text-right" style="color: black;">
+                                            {{ rbill.tax_amount }}
+                                        </div>
+                                    </div>
                                     {% if rbill.shipping_charge != 0 %}
-                                    <div class="row ml-1">
+                                    <div class="row  mr-2 ml-2">
                                         <div class="col-md-5 text-left " style=" color: black;">
                                             Shipping
                                         </div>
-                                        <div class="col-md-6 text-right ml-2" style="color: black;">
+                                        <div class="col-md-7 text-right " style="color: black;">
                                             {{ rbill.shipping_charge }}
                                         </div>
                                     </div>
                                     {% endif %}
                                     {% if rbill.adjustment != 0 %}
-                                    <div class="row ml-1">
+                                    <div class="row mr-2 ml-2">
                                         <div class="col-md-5 text-left" style=" color: black;">
                                             Adjustment
                                         </div>
-                                        <div class="col-md-6 text-right ml-2" style="color: black;">
+                                        <div class="col-md-7 text-right " style="color: black;">
                                             {{ rbill.adjustment }}
                                         </div>
                                     </div>
                                     {% endif %}
                                     {% if  rbill.paid_amount != 0 %}
-                                    <div class="row ml-1">
+                                    <div class="row  mr-2 ml-2">
                                         <div class="col-md-5 text-left" style=" color: black;">
                                             Paid
                                         </div>
-                                        <div class="col-md-6 text-right ml-2" style="color: black;">
+                                        <div class="col-md-7 text-right" style="color: black;">
                                             {{ rbill.paid_amount }}
                                         </div>
                                     </div>
                                     {% endif %}
-                                    <div class="row ml-1">
-                                        <div class="col-md-5 text-left" style=" color: black;">
-                                            Subtotal
-                                        </div>
-                                        <div class="col-md-6 text-right ml-2" style="color: black;">
-                                            {{ rbill.grand_total }}
-                                        </div>
-                                    </div>
-                                    {% if rbill.igst != 0 %}
-                                    <div class="row ml-1">
-                                        <div class="col-md-5 text-left " style=" color: black;">
-                                            IGST
-                                        </div>
-                                        <div class="col-md-6 text-right ml-2" style="color: black;">
-                                            {{ rbill.igst }}
-                                        </div>
-                                    </div>
-                                    {% else %}
-                                    <div class="row ml-1">
-                                        <div class="col-md-5 text-left" style=" color: black;">
-                                            CGST
-                                        </div>
-                                        <div class="col-md-6 text-right ml-2" style="color: black;">
-                                            {{ rbill.cgst }}
-                                        </div>
-                                    </div>
-                                    <div class="row ml-1">
-                                        <div class="col-md-5 text-left" style=" color: black;">
-                                            SGST
-                                        </div>
-                                        <div class="col-md-6 text-right ml-2" style="color: black;">
-                                            {{ rbill.sgst }}
-                                        </div>
-                                    </div>
-                                    {% endif %}
-                                    <div class="row ml-1">
-                                        <div class="col-md-5 text-left" style=" color: black;">
-                                            Total Tax
-                                        </div>
-                                        <div class="col-md-6 text-right ml-2" style="color: black;">
-                                            {{ rbill.tax_amount }}
-                                        </div>
-                                    </div>
                                    
                                     <hr class="ml-2 mr-2" style="color: black; border-bottom: 1px solid black; ">
                                 </div>
 
                                 <div class="mb-2">
-                                    <div class="row">
-                                        <div class="col-md-5 text-left ml-2" style=" font-size: large; color: black; font-weight: bold;">
+                                    <div class="row mr-2 ml-2">
+                                        <div class="col-md-5 text-left  " style=" font-size: large; color: black; font-weight: bold;">
                                             Total
                                         </div>
-                                        <div class="col-md-6 text-right ml-2" style="font-size: large; color: black; font-weight: bold;">
+                                        <div class="col-md-7 text-right" style="font-size: large; color: black; font-weight: bold;">
                                             {{ rbill.grand_total }}
                                         </div>
                                     </div>
