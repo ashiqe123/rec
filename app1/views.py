@@ -43215,15 +43215,6 @@ def inactive_loan(request,employeeid):
     return redirect('employee_details',employeeid)    
 
 
-def editloan(request,eid):
-    cmp1 = company.objects.get(id=request.session["uid"])
-    employee = EmployeeLoan.objects.get(id=eid,company=cmp1)
-    loan=EmployeeLoan.objects.get(id=eid)
-    loan_d=loan_duration.objects.filter(cid=cmp1)
-    bank = bankings_G.objects.filter(cid=cmp1)
-    print(loan.LoanDate)
-    print(loan.ExperyDate)
-    return render(request,'app1/editloan.html',{'bank':bank,'loan':loan,'employee': employee,'cmp1': cmp1,'loan_d':loan_d})                                           
 
 
 def loan_add_file(request,id):
@@ -51046,6 +51037,12 @@ def editloan_action(request, eid):
     employ = EmployeeLoan.objects.get(id=eid, company=cmp1)
 
     if request.method == 'POST':
+        empid = request.POST['employee']
+        first_name, last_name = empid.split(' ')
+        print('First Name:', first_name)
+        print('Last Name:', last_name)
+        print('emploree')
+        employee = payrollemployee.objects.get(firstname=first_name,lastname=last_name,cid=cmp1)
         Loan_Amount = request.POST.get('Loan_Amound')
         loandate = request.POST.get('loandate')
         experydate = request.POST.get('experydate')
@@ -51119,7 +51116,7 @@ def editloan_action(request, eid):
         employ.save()
 
         # Update the loan transaction
-        lt = employee_loan_tran.objects.get(particular='LOAN ISSUED',cid = cmp1)
+        lt = employee_loan_tran.objects.get(employee =employee.employeeid,particular='LOAN ISSUED',cid = cmp1)
         lt.loan_trans_date = loandate
         lt.amount = Loan_Amount
         lt.total_amount = Loan_Amount
@@ -51138,6 +51135,7 @@ def editloan_action(request, eid):
             elif i.particular == 'ADDITIONAL LOAN ISSUED':
                 print('false')
                 res = employ.balance_loan + i.amount
+                employ.LoanAmount += i.amount
             i.balance_loan  = res
             i.save()
             employ.balance_loan = res
@@ -51164,3 +51162,15 @@ def recur_custasc(request):
             'cmp1': cmp1
             }
     return render(request,'app1/recurringbills_home.html',context)
+
+
+def editloan(request,eid):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    employee = EmployeeLoan.objects.get(id=eid,company=cmp1)
+    loan=EmployeeLoan.objects.get(id=eid)
+    loan_d=loan_duration.objects.filter(cid=cmp1)
+    bank = bankings_G.objects.filter(cid=cmp1)
+    loan_trans=employee_loan_tran.objects.get(emploee_loan=loan.id,particular='LOAN ISSUED',cid = cmp1)
+    print(loan.LoanDate)
+    print(loan.ExperyDate)
+    return render(request,'app1/editloan.html',{'loan_trans':loan_trans,'bank':bank,'loan':loan,'employee': employee,'cmp1': cmp1,'loan_d':loan_d})                                           
